@@ -57,8 +57,15 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
                 <div className="tag-text">{tagText}</div>
             </button>
             <br />
-            <progress value={progress} max={100} style={{ width: '100%' }}></progress>
-            <p>{`File upload progress: ${progress}%`}</p>
+            {/* <progress value={progress} max={100} style={{ width: '100%' }}></progress>
+            <p>{`File upload progress: ${progress}%`}</p> */}
+
+            {selectedFile && (
+                <>
+                    <progress value={progress} max={100} style={{ width: '100%' }}></progress>
+                    <p>{`File upload progress: ${progress}%`}</p>
+                </>
+            )}
 
             <input
                 ref={fileInputRef}
