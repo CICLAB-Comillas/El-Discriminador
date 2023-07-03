@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <>
+            <div>
+                <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
+                    <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo"/>
+                </a>
+            </div>
+            <h1>El Discriminador</h1>
+            <h2>Applicant filtering system</h2>
+            <h5>by:
+                <br/> A. Gómez, M. Hervás
+                <br/> M. Liz, A. Quintana
+            </h5>
+
+
+            <div className="card">
+
+            </div>
+
+            <p className="read-the-docs">
+                --- Read the docs ---
+            </p>
+            <p className="read-the-docs">
+                To learn more clicks on the CICLAB logo or visit {'https://github.com/CICLAB-Comillas'}
+            </p>
+        </>
+
+    )
 }
 
 export default App
