@@ -1,7 +1,16 @@
 
 import './App.css'
+import {UploadButton} from "./comps/UploadButton.tsx";
+import {useState} from "react";
 
 function App() {
+
+    const [file, setFile] = useState(null);
+
+    const handleFileUpdate = (newFile) => {
+        setFile(newFile);
+    };
+
 
     return (
         <>
@@ -19,11 +28,12 @@ function App() {
 
 
             <div className="card">
-
+                <UploadButton onFileUpload={handleFileUpdate}/>
             </div>
 
             <p className="read-the-docs">
-                --- Read the docs ---
+                "El que vale vale y el que no, a ICADE" <br/>
+                - El Discriminador.
             </p>
             <p className="read-the-docs">
                 To learn more clicks on the CICLAB logo or visit {'https://github.com/CICLAB-Comillas'}
