@@ -1,64 +1,90 @@
-
-// VERSIÓN 4.0 
+// VERSIÓN 4.0
 import React, { useRef, useState, ChangeEvent } from 'react';
 
 interface UploadButtonProps {
-    tagText?: string;
-    onFileUpload: (file: string) => void;
+  tagText?: string;
+  onFolderUpload: (fileUrls: string[]) => void;
 }
 
-export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A FILE", onFileUpload }) => {
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [fileURL, setFileURL] = useState('');
+export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD", onFolderUpload }) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<File | null>(null);
+  const [fileURLs, setFileURLs] = useState<string[]>([]);
 
-    const handleClick = () => {
-        fileInputRef.current?.click();
-    };
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files && event.target.files[0];
-        if (file) {
-            setSelectedFile(file);
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const folder = files[0];
+      setSelectedFolder(folder);
 
-            const reader = new FileReader();
-            reader.onload = () => {
-                const fileContent = reader.result;
-                // Aquí puedes hacer algo con el contenido del archivo, como mostrarlo en la interfaz de usuario.
-                console.log(fileContent);
-            };
-            reader.readAsText(file);
+      const fileURLs: string[] = [];
+      const readerPromises: Promise<string>[] = [];
 
-            // Guarda el archivo como una URL
-            const fileURL = URL.createObjectURL(file);
-            setFileURL(fileURL);
+      const entries = folder.webkitEntries || folder.entries || [];
 
+      const readEntries = (entries: any) => {
+        const reader = new FileReader();
+        const readerPromise = new Promise<string>((resolve) => {
+          reader.onload = () => {
+            const fileContent = reader.result as string;
+            resolve(fileContent);
+          };
+        });
 
-            // Call the passed in prop function
-            onFileUpload(fileURL);
-        }
-    };
+        entries.forEach((entry: any) => {
+          if (entry.isFile) {
+            const file = entry.file((file: any) => {
+              const fileURL = URL.createObjectURL(file);
+              fileURLs.push(fileURL);
+              reader.readAsText(file);
+            });
+          } else if (entry.isDirectory) {
+            const reader = entry.createReader();
+            reader.readEntries(readEntries);
+          }
+        });
 
-    return (
+        readerPromises.push(readerPromise);
+      };
+
+      readEntries(entries);
+
+      Promise.all(readerPromises).then(() => {
+        onFolderUpload(fileURLs);
+      });
+
+      setFileURLs(fileURLs);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick} className="tag">
+        <div className="tag-text">{tagText}</div>
+      </button>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        webkitdirectory="true"
+        directory="true"
+      />
+
+      {selectedFolder && (
         <div>
-            <button onClick={handleClick} className="tag">
-                <div className="tag-text">{tagText}</div>
-            </button>
-
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept=".mp3, .mp4, .svg, .wav, .flac, .aac, .m4a, .ogg, .aiff, .aif, .weba"
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-            />
-
-            {selectedFile && (
-                <div>
-                    <h4>Selected File:</h4>
-                    <p className={"fileDisplay"}>{selectedFile.name}</p>
-                </div>
-            )}
+          <h4>Selected Folder:</h4>
+          <div className="folderDisplay">
+            <span className="folderIcon">&#128193;</span>
+            <p className="folderName">{selectedFolder.name}</p>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 };

@@ -1,5 +1,6 @@
 
 import './App.css'
+import './comps/UploadButton.css'
 import {UploadButton} from "./comps/UploadButton.tsx";
 import {useState} from "react";
 
@@ -25,7 +26,6 @@ function App() {
                 <br/> A. Gómez, M. Hervás
                 <br/> M. Liz, A. Quintana
             </h5>
-
 
             <div className="card">
                 <UploadButton onFileUpload={handleFileUpdate}/>
