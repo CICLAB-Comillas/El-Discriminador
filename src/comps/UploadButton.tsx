@@ -12,6 +12,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileURL, setFileURL] = useState('');
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const handleClick = () => {
         fileInputRef.current?.click();
@@ -28,12 +29,15 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
                 if (progressEvent.lengthComputable) {
                     const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
                     console.log(`File upload progress: ${percent}%`);
+                    setProgress(percent); // Actualizar el progreso de carga en el estado
                 }
             };
             reader.onload = () => {
                 const fileContent = reader.result;
                 // Aquí puedes hacer algo con el contenido del archivo, como mostrarlo en la interfaz de usuario.
                 console.log(fileContent);
+                // Detener el estado de carga después de completar la carga del archivo
+                setLoading(false);
             };
             reader.readAsText(file);
 
@@ -53,9 +57,8 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
                 <div className="tag-text">{tagText}</div>
             </button>
             <br />
-            <button onClick={handleClick} className="tag" disabled={loading}>
-                <div className="tag-text">{loading ? "Loading..." : tagText}</div>
-            </button>
+            <progress value={progress} max={100} style={{ width: '100%' }}></progress>
+            <p>{`File upload progress: ${progress}%`}</p>
 
             <input
                 ref={fileInputRef}
@@ -65,6 +68,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
                 onChange={handleFileChange}
                 disabled={loading}
             />
+
 
             {selectedFile && (
                 <div>
