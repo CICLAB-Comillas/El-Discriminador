@@ -70,7 +70,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ tagText = "UPLOAD A 
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".mp3, .mp4, .svg, .wav, .flac, .aac, .m4a, .ogg, .aiff, .aif, .weba"
+                accept=".jpg, .png"
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
                 disabled={loading}
