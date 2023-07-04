@@ -33,10 +33,114 @@
   }
 }
 
+
+.big-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.dropzone-wrapper {
+  color: #646cffaa;
+  border-radius: 10px;
+    border: 2px dashed;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  height: 50px;
+  width: 550px;
+}
+
+.tag {
+  color: #1a1a1a;
+}
+
+.fileDisplay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.fileDisplay p {
+  background-color: #93A9D1;
+  color: white;
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+
+
+.png-container {
+  max-width: 500px;
+  max-height: 400px;
+
+}
+
+.png-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.tinder-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+
+  background-color: #aaaaaa;
+
+  width: 100%;
+  height: 100%;
+}
+
+.tinder-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+
+  background-color: #aaaaaa;
+
+  width: 2000px;
+  height: 1000px;
+
+
+}
+
+.pair-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  justify-content: center;
+  flex-grow: 1;
+
+  width: 100%;
+  height: 100%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button-container button {
+  margin: 0 5px;
 }
