@@ -108,7 +108,9 @@ function App() {
                 <br />
                 {pngFiles.length > 0 && jsonFiles.length > 0 && (
                     <div>
-                        <h4>Status:</h4>
+                        <div className="linea-en-blanco"></div>
+
+                        {/* <h4>Status:</h4> */}
                         <div className={"fileDisplay"}>
                             <div className="column">
                                 <div className="column analyzed-document">
