@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 
 const UploadButton = ({ tagText = "UPLOAD A FOLDER", onFileUpload }) => {
+
+
     const onDrop = useCallback((acceptedFiles) => {
         const pngFiles = [];
         const jsonFiles = [];
@@ -27,15 +29,15 @@ const UploadButton = ({ tagText = "UPLOAD A FOLDER", onFileUpload }) => {
 
     return (
         <div className={"dropzone-wrapper"}>
-        <div {...getRootProps()} className="tag">
-            <input {...getInputProps()} accept=".png,.json" />
-            <div className="tag-text">{tagText}</div>
-            {isDragActive ? (
-                <div className="dropzone-active">Drop the files here</div>
-            ) : (
-                <div className="dropzone-inactive">Drag and drop or click to upload files</div>
-            )}
-        </div>
+            <div {...getRootProps()} className="tag">
+                <input {...getInputProps()} accept=".png,.json" />
+                <div className="tag-text">{tagText}</div>
+                {isDragActive ? (
+                    <div className="dropzone-active">Drop the files here</div>
+                ) : (
+                    <div className="dropzone-inactive">Drag and drop or click to upload files</div>
+                )}
+            </div>
         </div>
     );
 };
