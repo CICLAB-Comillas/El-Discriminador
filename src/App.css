@@ -1,3 +1,6 @@
+/* App.css */
+
+/* Root */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,15 +8,18 @@
   text-align: center;
 }
 
+/* Logo */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -33,15 +39,14 @@
   }
 }
 
-
+/* Layout */
 .big-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
 }
-
 
 .card {
   padding: 2em;
@@ -51,16 +56,12 @@
   color: #888;
 }
 
+/* Dropzone */
 .dropzone-wrapper {
   color: #646cffaa;
   border-radius: 10px;
-    border: 2px dashed;
-
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-
+  border: 2px dashed;
+  padding: 10px;
   height: 50px;
   width: 550px;
 }
@@ -77,34 +78,20 @@
 }
 
 .fileDisplay p {
-  background-color: #93A9D1;
+  background-color: #93a9d1;
   color: white;
   border-radius: 5px;
   padding: 2px 5px;
 }
 
-
-.png-container {
-  max-width: 500px;
-  max-height: 400px;
-
-}
-
-.png-container img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
+/* Tinder */
 .tinder-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-
   background-color: #aaaaaa;
-
   width: 100%;
   height: 100%;
 }
@@ -115,32 +102,129 @@
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-
   background-color: #aaaaaa;
-
-  width: 2000px;
-  height: 1000px;
-
-
-}
-
-.pair-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  justify-content: center;
-  flex-grow: 1;
-
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  padding: 20px;
+  margin: 0 auto;
 }
 
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
 }
+
 .button-container button {
   margin: 0 5px;
+}
+
+/* Subjects and Grades */
+.subject-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center; /* Vertically align the subject boxes */
+}
+
+.subject-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.subject-grade-container {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  width: 100%;
+}
+
+/* Subjects and Grades */
+.subject-box {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-width: 250px;
+  margin-right: 10px;
+  color: black;
+  font-size: 12px;
+  height: 5px;
+  display: flex; /* Add display flex */
+  align-items: center; /* Vertically align the text */
+}
+
+.grade-box {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-width: 15px;
+  height: 5px;
+  color: black;
+  font-size: 12px;
+  display: flex; /* Add display flex */
+  align-items: center; /* Vertically align the text */
+}
+
+.subject-input {
+  min-width: 200px;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-left: 10px;
+  margin-right: 50px;
+  font-size: 12px;
+}
+
+.grade-input {
+  width: 30px;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+
+/* PNG Image */
+.png-container {
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.png-container img {
+  width: 550px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Tinder Pair Container */
+.pair-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.image-container {
+  flex-basis: 50%;
+  margin-right: 20px;
+}
+
+.content-container {
+  flex-basis: 50%;
+  align-self: flex-start;
+}
+
+.json-container {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow: auto;
+}
+
+.json-container pre {
+  white-space: pre-wrap;
 }

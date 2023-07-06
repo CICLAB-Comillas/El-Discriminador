@@ -1,68 +1,116 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Tinder = ({ pngFiles, jsonFiles }) => {
-    const [pngURLs, setPngURLs] = useState([]);
-    const [currentPairIndex, setCurrentPairIndex] = useState(0);
+  const [pngURLs, setPngURLs] = useState([]);
+  const [jsonData, setJsonData] = useState([]);
 
-    useEffect(() => {
-        const getPngURLs = async () => {
-            const urls = await Promise.all(
-                pngFiles.map((file) => {
-                    return new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(file);
-                    });
-                })
-            );
-            setPngURLs(urls);
-        };
 
-        getPngURLs();
-    }, [pngFiles]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const pngURLs = await Promise.all(
+        pngFiles.map((file) => {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+      setPngURLs(pngURLs);
 
-    const handleNext = () => {
-        setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
+      const jsonContent = await Promise.all(
+        jsonFiles.map((file) => {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result);
+                resolve(json);
+              } catch (error) {
+                reject(error);
+              }
+            };
+            reader.readAsText(file);
+          });
+        })
+      );
+      setJsonData(jsonContent);
     };
 
-    const handlePrev = () => {
-        setCurrentPairIndex((prevIndex) =>
-            prevIndex === 0 ? pngURLs.length - 1 : prevIndex - 1
-        );
-    };
+    fetchData();
+  }, [pngFiles, jsonFiles]);
 
-    const currentPair = (
-        <div className="pair-container">
-                <div className="png-container">
-                    <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
-                </div>
-                <div className="json-container">
-                    <pre>{JSON.stringify(jsonFiles[currentPairIndex], null, 2)}</pre>
-                </div>
-        </div>
+  const [currentPairIndex, setCurrentPairIndex] = useState(0);
+
+  const handleNext = () => {
+    setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentPairIndex((prevIndex) =>
+      prevIndex === 0 ? pngURLs.length - 1 : prevIndex - 1
     );
+  };
 
-    return (
-        <>
-        <div className="tinder-wrapper">
-        <div className="tinder-container">
-            {currentPair}
-
+const currentPair = (
+  <div className="pair-container">
+    <div className="image-container">
+      <div className="png-container">
+        <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+      </div>
+    </div>
+    <div className="content-container">
+      {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+        <div>
+          <h2>Subjects:</h2>
+          <ul className="subject-list">
+            {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => (
+              <li key={title}>
+                <div className="subject-grade-container">
+                  <div className="subject-box">
+                    <div className="subject">{title}</div>
+                  </div>
+                  <input
+                    type="text"
+                    className="subject-input"
+                    placeholder="Enter subject text"
+                  />
+                </div>
+                <div className="subject-grade-container">
+                  <div className="grade-box">
+                    <div className="grade">{subject.grade}</div>
+                  </div>
+                  <input
+                    type="text"
+                    className="grade-input"
+                    placeholder=""
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
-        </div>
-        <div className="button-container">
-            <button onClick={handlePrev}>&lt;</button>
-            <button onClick={handleNext}>&gt;</button>
-        </div>
-        </>
-    );
+      )}
+    </div>
+  </div>
+);
+  return (
+    <>
+      <div className="tinder-wrapper">
+        <div className="tinder-container">{currentPair}</div>
+      </div>
+      <div className="button-container">
+        <button onClick={handlePrev}>&lt;</button>
+        <button onClick={handleNext}>&gt;</button>
+      </div>
+    </>
+  );
 };
 
 Tinder.propTypes = {
-    pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
-    jsonFiles: PropTypes.arrayOf(PropTypes.object).isRequired,
+  pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
+  jsonFiles: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 export default Tinder;

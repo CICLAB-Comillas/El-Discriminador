@@ -3,46 +3,50 @@ import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 
 const UploadButton = ({ tagText = "UPLOAD A FOLDER", onFileUpload }) => {
-    const onDrop = useCallback((acceptedFiles) => {
-        const pngFiles = [];
-        const jsonFiles = [];
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const pngFiles = [];
+    const jsonFiles = [];
 
-        // Separate the dropped files into PNG and JSON files based on their extensions
-        acceptedFiles.forEach((file) => {
-            if (file.type === 'image/png') {
-                pngFiles.push(file);
-            } else if (file.type === 'application/json') {
-                jsonFiles.push(file);
-            }
-        });
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      const file = acceptedFiles[i];
+      const extension = file.name.split('.').pop();
 
-        onFileUpload(pngFiles, jsonFiles);
-    }, [onFileUpload]);
+      if (extension === 'png' && file.type === 'image/png') {
+        pngFiles.push(file);
+      } else if (extension === 'json' && file.type === 'application/json') {
+        jsonFiles.push(file);
+      }
+    }
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        multiple: true,
-        directory: true,
-    });
+    const fileNames = acceptedFiles.map((file) => file.name);
+    console.log(fileNames);
 
-    return (
-        <div className={"dropzone-wrapper"}>
-        <div {...getRootProps()} className="tag">
-            <input {...getInputProps()} accept=".png,.json" />
-            <div className="tag-text">{tagText}</div>
-            {isDragActive ? (
-                <div className="dropzone-active">Drop the files here</div>
-            ) : (
-                <div className="dropzone-inactive">Drag and drop or click to upload files</div>
-            )}
+    onFileUpload(pngFiles, jsonFiles);
+  }, [onFileUpload]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
+    directory: true,
+    accept: ['.png', '.json'],
+  });
+
+  return (
+    <div className="dropzone-wrapper">
+      <div {...getRootProps()} className="tag">
+        <input {...getInputProps()} />
+        <div className="tag-text">{tagText}</div>
+        <div className={`dropzone-text ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}>
+          {isDragActive ? 'Drop the files here' : 'Drag and drop or click to upload files'}
         </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 UploadButton.propTypes = {
-    tagText: PropTypes.string,
-    onFileUpload: PropTypes.func.isRequired,
+  tagText: PropTypes.string,
+  onFileUpload: PropTypes.func.isRequired,
 };
 
 export default UploadButton;
