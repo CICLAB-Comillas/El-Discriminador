@@ -67,6 +67,8 @@ import React, { useState } from 'react';
 import UploadButton from "./comps/UploadButton.jsx";
 import './App.css';
 import Tinder from "./comps/Tinder.jsx";
+import Notas from "./comps/Notas.jsx";
+import Botones from "./comps/Botones.jsx";
 
 function App() {
     const [pngFiles, setPngFiles] = useState([]);
@@ -138,19 +140,15 @@ function App() {
                             <div className="column">
                                 <div className="column notes">
                                     <h5>NOTAS:</h5>
+                                    <Notas />
                                     {/* Contenido de la tercera columna */}
                                 </div>
                             </div>
                         </div>
+                        <Botones />
                     </div>
                 )}
             </div>
-
-            {pngFiles.length > 0 && jsonFiles.length > 0 && (
-                <div className="card">
-                    <Tinder pngFiles={pngFiles} jsonFiles={jsonFiles} />
-                </div>
-            )}
 
             <p className="read-the-docs">
                 {/* eslint-disable-next-line react/no-unescaped-entities */}
