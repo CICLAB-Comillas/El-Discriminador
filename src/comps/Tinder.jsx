@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 const Tinder = ({ pngFiles, jsonFiles }) => {
   const [pngURLs, setPngURLs] = useState([]);
   const [jsonData, setJsonData] = useState([]);
-
+  const [currentPairIndex, setCurrentPairIndex] = useState(0);
+  const [userInputs, setUserInputs] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,8 +42,6 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     fetchData();
   }, [pngFiles, jsonFiles]);
 
-  const [currentPairIndex, setCurrentPairIndex] = useState(0);
-
   const handleNext = () => {
     setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
   };
@@ -53,48 +52,65 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     );
   };
 
-const currentPair = (
-  <div className="pair-container">
-    <div className="image-container">
-      <div className="png-container">
-        <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+  const handleSubjectChange = (event, title) => {
+    setUserInputs((prevInputs) => ({
+      ...prevInputs,
+      [title]: event.target.value
+    }));
+  };
+
+  useEffect(() => {
+    console.log(userInputs);
+  }, [userInputs]);
+
+  const currentPair = (
+    <div className="pair-container">
+      <div className="image-container">
+        <div className="png-container">
+          <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+        </div>
+      </div>
+      <div className="content-container">
+        {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+          <div>
+            <h2>Subjects:</h2>
+            <ul className="subject-list">
+              {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
+                const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
+                return (
+                  <li key={title}>
+                    <div className="subject-grade-container">
+                      <div className="subject-box">
+                        <div className="subject">{formattedTitle}</div>
+                      </div>
+                      <input
+                        type="text"
+                        className="subject-input"
+                        placeholder="Enter subject text"
+                        value={userInputs[title] || ''}
+                        onChange={(event) => handleSubjectChange(event, title)}
+                      />
+                    </div>
+                    <div className="subject-grade-container">
+                      <div className="grade-box">
+                        <div className="grade">{subject.grade}</div>
+                      </div>
+                      <input
+                        type="text"
+                        className="grade-input"
+                        placeholder=""
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
-    <div className="content-container">
-      {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
-        <div>
-          <h2>Subjects:</h2>
-          <ul className="subject-list">
-            {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => (
-              <li key={title}>
-                <div className="subject-grade-container">
-                  <div className="subject-box">
-                    <div className="subject">{title}</div>
-                  </div>
-                  <input
-                    type="text"
-                    className="subject-input"
-                    placeholder="Enter subject text"
-                  />
-                </div>
-                <div className="subject-grade-container">
-                  <div className="grade-box">
-                    <div className="grade">{subject.grade}</div>
-                  </div>
-                  <input
-                    type="text"
-                    className="grade-input"
-                    placeholder=""
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  </div>
-);
+  );
+
   return (
     <>
       <div className="tinder-wrapper">
@@ -114,3 +130,4 @@ Tinder.propTypes = {
 };
 
 export default Tinder;
+
