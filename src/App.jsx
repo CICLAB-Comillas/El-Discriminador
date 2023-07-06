@@ -30,11 +30,13 @@ function App() {
             </h5>
 
             <div className="card">
-                <UploadButton    onFileUpload={handleFileUpdate}/>
+                <UploadButton onFileUpload={handleFileUpdate} />
                 <br />
                 {pngFiles.length > 0 && jsonFiles.length > 0 && (
                     <div>
-                        <h4>Status:</h4>
+                        {/* <h4>Status:</h4> */}
+
+                        <div className="linea-en-blanco"></div>
                         <div className={"fileDisplay"}><p>{"Upload Succesful"}</p></div>
                     </div>
                 )}

@@ -28,6 +28,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -128,7 +129,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center; /* Vertically align the subject boxes */
+  align-items: center;
+  /* Vertically align the subject boxes */
 }
 
 .subject-list li {
@@ -154,8 +156,10 @@
   color: black;
   font-size: 12px;
   height: 5px;
-  display: flex; /* Add display flex */
-  align-items: center; /* Vertically align the text */
+  display: flex;
+  /* Add display flex */
+  align-items: center;
+  /* Vertically align the text */
 }
 
 .grade-box {
@@ -166,8 +170,10 @@
   height: 5px;
   color: black;
   font-size: 12px;
-  display: flex; /* Add display flex */
-  align-items: center; /* Vertically align the text */
+  display: flex;
+  /* Add display flex */
+  align-items: center;
+  /* Vertically align the text */
 }
 
 .subject-input {
@@ -227,4 +233,8 @@
 
 .json-container pre {
   white-space: pre-wrap;
+}
+
+.linea-en-blanco {
+  border-top: 40px solid transparent;
 }
