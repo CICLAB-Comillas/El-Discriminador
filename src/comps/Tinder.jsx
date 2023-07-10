@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import SaveButton from "./SaveButton";
+import './Tinder.css';
 
 const Tinder = ({ pngFiles, jsonFiles }) => {
   const [pngURLs, setPngURLs] = useState([]);
@@ -8,6 +9,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [userInputs, setUserInputs] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,12 +50,14 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
 
   const handleNext = () => {
     setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
+    setIsImageExpanded(false);
   };
 
   const handlePrev = () => {
     setCurrentPairIndex((prevIndex) =>
       prevIndex === 0 ? pngURLs.length - 1 : prevIndex - 1
     );
+    setIsImageExpanded(false);
   };
 
   const handleSubjectChange = (event, title) => {
@@ -67,6 +71,10 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     });
   };
 
+  const handleImageExpand = () => {
+    setIsImageExpanded((prevExpanded) => !prevExpanded);
+  };
+
   if (!isDataLoaded) {
     return <div>Loading...</div>;
   }
@@ -74,7 +82,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   const currentPair = (
     <div className="pair-container">
       <div className="image-container">
-        <div className="png-container">
+        <div className={`png-container ${isImageExpanded ? 'expanded' : ''}`}>
           <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
         </div>
         <div className="button-container">
@@ -85,6 +93,9 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
           <div className="pair-indicator">
             {currentPairIndex + 1}/{pngURLs.length}
           </div>
+          <button onClick={handleImageExpand}>
+            {isImageExpanded ? 'Collapse' : 'Expand'}
+          </button>
         </div>
       </div>
       <div className="content-container">
