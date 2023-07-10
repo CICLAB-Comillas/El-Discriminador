@@ -1,11 +1,73 @@
-import React, { useCallback, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 
-const UploadButton = ({ tagText = "UPLOAD A FOLDER", onFileUpload }) => {
+const UploadButton = ({ tagText = 'UPLOAD A FOLDER', onFileUpload }) => {
+  const fileInputRef = useRef(null);
+  const [selectedFolder, setSelectedFolder] = useState(null);
+  const [fileURLs, setFileURLs] = useState([]);
   const [progress, setProgress] = useState(0);
 
-  const onDrop = useCallback(async (acceptedFiles) => {
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = useCallback((event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const folder = files[0];
+      setSelectedFolder(folder);
+
+      const fileURLs = [];
+      const readerPromises = [];
+
+      const entries = folder.webkitEntries || folder.entries || [];
+
+      const readEntries = (entries) => {
+        const reader = new FileReader();
+        const readerPromise = new Promise((resolve) => {
+          reader.onload = () => {
+            const fileContent = reader.result;
+            resolve(fileContent);
+          };
+        });
+
+        entries.forEach((entry) => {
+          if (entry.isFile) {
+            const file = entry.file((file) => {
+              const fileURL = URL.createObjectURL(file);
+              fileURLs.push(fileURL);
+              reader.readAsText(file);
+            });
+          } else if (entry.isDirectory) {
+            const reader = entry.createReader();
+            reader.readEntries(readEntries);
+          }
+        });
+
+        readerPromises.push(readerPromise);
+      };
+
+      readEntries(entries);
+
+      Promise.all(readerPromises).then(() => {
+        onFileUpload(fileURLs);
+      });
+
+      setFileURLs(fileURLs);
+    }
+  }, [onFileUpload]);
+
+  const uploadFile = useCallback(
+    (file) => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 100); // Simulate upload delay
+      });
+    },
+    []
+  );
+
+  const handleDrop = useCallback(async (acceptedFiles) => {
     const pngFiles = [];
     const jsonFiles = [];
 
@@ -30,36 +92,56 @@ const UploadButton = ({ tagText = "UPLOAD A FOLDER", onFileUpload }) => {
     }
 
     onFileUpload(pngFiles, jsonFiles);
-  }, [onFileUpload]);
-
-  const uploadFile = (file) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, 1000); // Simulate upload delay
-    });
-  };
+    setProgress(0); // Reset progress after uploading files
+  }, [onFileUpload, uploadFile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: handleDrop,
     multiple: true,
     directory: true,
+    accept: ['.png', '.json'],
   });
 
   return (
     <div className="dropzone-wrapper">
-      <div {...getRootProps()} className="tag">
-        <input {...getInputProps()} accept=".png,.json" />
+      <div
+        {...getRootProps()}
+        className={`tag ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}
+      >
+        <input
+          {...getInputProps()}
+          ref={fileInputRef}
+          type="file"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+          webkitdirectory="true"
+          directory="true"
+        />
         <div className="tag-text">{tagText}</div>
-        {isDragActive ? (
-          <div className="dropzone-active">Drop the files here</div>
-        ) : (
-          <div className="dropzone-inactive">Drag and drop or click to upload files</div>
-        )}
-
-        <br />
-
-        {progress > 0 && <progress value={progress} max={100} style={{ width: '100%' }} />}
-        {progress > 0 && <p>{`File upload progress: ${progress}%`}</p>}
+        <div className={`dropzone-text ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}>
+          {isDragActive ? 'Drop the files here' : 'Drag and drop or click to upload files'}
+        </div>
       </div>
+      {selectedFolder && (
+        <div>
+          <h4>Selected Folder:</h4>
+          <div className="folderDisplay">
+            <span className="folderIcon">&#128193;</span>
+            <p className="folderName">{selectedFolder.name}</p>
+          </div>
+        </div>
+      )}
+      {progress > 0 && (
+        <div className="progress-bar-wrapper">
+          <progress value={progress} max={100} style={{ width: '100%' }} />
+          <p>{`File upload progress: ${progress}%`}</p>
+        </div>
+      )}
+      {fileURLs.length > 0 && (
+        <div className="fileDisplay">
+          <p>{`File Uploaded: ${fileURLs[fileURLs.length - 1]}`}</p>
+        </div>
+      )}
     </div>
   );
 };

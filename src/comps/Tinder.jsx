@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import SaveButton from "./SaveButton";
 
 const Tinder = ({ pngFiles, jsonFiles }) => {
   const [pngURLs, setPngURLs] = useState([]);
   const [jsonData, setJsonData] = useState([]);
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
-  const [userInputs, setUserInputs] = useState({});
+  const [userInputs, setUserInputs] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +39,8 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
         })
       );
       setJsonData(jsonContent);
+      setIsDataLoaded(true);
+      setUserInputs(jsonContent.map(() => ({}))); // Initialize empty user inputs for each pair
     };
 
     fetchData();
@@ -53,15 +57,19 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   };
 
   const handleSubjectChange = (event, title) => {
-    setUserInputs((prevInputs) => ({
-      ...prevInputs,
-      [title]: event.target.value
-    }));
+    setUserInputs((prevInputs) => {
+      const updatedInputs = [...prevInputs];
+      updatedInputs[currentPairIndex] = {
+        ...updatedInputs[currentPairIndex],
+        [title]: event.target.value
+      };
+      return updatedInputs;
+    });
   };
 
-  useEffect(() => {
-    console.log(userInputs);
-  }, [userInputs]);
+  if (!isDataLoaded) {
+    return <div>Loading...</div>;
+  }
 
   const currentPair = (
     <div className="pair-container">
@@ -69,11 +77,19 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
         <div className="png-container">
           <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
         </div>
+        <div className="button-container">
+          <div className="arrow-row">
+            <button onClick={handlePrev}>&lt;</button>
+            <button onClick={handleNext}>&gt;</button>
+          </div>
+          <div className="pair-indicator">
+            {currentPairIndex + 1}/{pngURLs.length}
+          </div>
+        </div>
       </div>
       <div className="content-container">
         {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
           <div>
-            <h2>Subjects:</h2>
             <ul className="subject-list">
               {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
                 const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
@@ -87,7 +103,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
                         type="text"
                         className="subject-input"
                         placeholder="Enter subject text"
-                        value={userInputs[title] || ''}
+                        value={userInputs[currentPairIndex][title] || ''}
                         onChange={(event) => handleSubjectChange(event, title)}
                       />
                     </div>
@@ -116,18 +132,22 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
       <div className="tinder-wrapper">
         <div className="tinder-container">{currentPair}</div>
       </div>
-      <div className="button-container">
-        <button onClick={handlePrev}>&lt;</button>
-        <button onClick={handleNext}>&gt;</button>
-      </div>
+      {pngFiles.length > 0 && jsonFiles.length > 0 && (
+        <div className="card">
+          <SaveButton
+            pngFile={pngFiles[currentPairIndex]}
+            jsonFile={jsonFiles[currentPairIndex]}
+            userInput={userInputs[currentPairIndex]}
+          />
+        </div>
+      )}
     </>
   );
 };
 
 Tinder.propTypes = {
   pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
-  jsonFiles: PropTypes.arrayOf(PropTypes.any).isRequired,
+  jsonFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
 };
 
 export default Tinder;
-
