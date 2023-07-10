@@ -28,6 +28,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -58,16 +59,25 @@
 
 /* Dropzone */
 .dropzone-wrapper {
+  position: relative; /* Add position: relative */
   color: #646cffaa;
   border-radius: 10px;
-  border: 2px dashed;
+  border: 2px dashed #646cff;
   padding: 10px;
   height: 50px;
   width: 550px;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
 }
 
+.dropzone-wrapper:focus,
+.dropzone-wrapper.dropzone-active {
+  border-color: #646cff;
+}
+
+
 .tag {
-  color: #1a1a1a;
+  color: #888;
 }
 
 .fileDisplay {
@@ -109,26 +119,16 @@
   margin: 0 auto;
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.button-container button {
-  margin: 0 5px;
-}
-
 /* Subjects and Grades */
 .subject-list {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin-top: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center; /* Vertically align the subject boxes */
+  align-items: center;
+  /* Vertically align the subject boxes */
 }
 
 .subject-list li {
@@ -154,20 +154,25 @@
   color: black;
   font-size: 12px;
   height: 5px;
-  display: flex; /* Add display flex */
-  align-items: center; /* Vertically align the text */
+  display: flex;
+  /* Add display flex */
+  align-items: center;
+  /* Vertically align the text */
 }
 
 .grade-box {
   background-color: #f5f5f5;
   border: 1px solid #ccc;
   padding: 10px;
-  min-width: 15px;
+  width: 10px;
   height: 5px;
   color: black;
+  justify-content: center;
   font-size: 12px;
-  display: flex; /* Add display flex */
-  align-items: center; /* Vertically align the text */
+  display: flex;
+  /* Add display flex */
+  align-items: center;
+  /* Vertically align the text */
 }
 
 .subject-input {
@@ -227,4 +232,33 @@
 
 .json-container pre {
   white-space: pre-wrap;
+}
+
+.linea-en-blanco {
+  border-top: 40px solid transparent;
+}
+
+/* Progress bar */
+.progress-bar-wrapper {
+  position: relative; /* Add position: relative */
+  margin-top: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.arrow-row {
+  display: flex;
+  gap: 10px;
+}
+
+.pair-indicator {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
 }

@@ -1,7 +1,17 @@
 import { UploadButton } from '../comps/UploadButton.jsx';
 import React, { useState } from 'react';
 
+<<<<<<< HEAD:src/App.tsx
+import './App.css'
+import './comps/UploadButton.css'
+import {UploadButton} from "./comps/UploadButton.tsx";
+import {useState} from "react";
+
+function App() {
+
+=======
 function HomePage() {
+>>>>>>> main:src/pages/HomePage.jsx
     const [file, setFile] = useState(null);
 
     const handleFileUpdate = (newFile) => {
