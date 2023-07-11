@@ -119,10 +119,6 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
         )}
 
         <div className="button-container">
-          <div className="arrow-row">
-            <button onClick={handlePrev}>&lt;</button>
-            <button onClick={handleNext}>&gt;</button>
-          </div>
           <div className="button-container">
             <div className="arrow-row">
               <button onClick={handlePrev}>&lt;</button>

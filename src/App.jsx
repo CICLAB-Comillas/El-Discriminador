@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import UploadButton from "./comps/UploadButton";
 import './App.css';
 import TinderParent from "./comps/TinderParent.jsx";
+import EmojiComponent from "./comps/EmojiComponent.jsx";
 
 function App() {
     const [folderMap, setFolderMap] = useState(new Map());
@@ -32,8 +33,9 @@ function App() {
                     <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo" />
                 </a>
             </div>
-            <h1>El Discriminador v.2</h1>
+            <h1>El Discriminador v.4</h1>
             <h2>Applicant filtering system</h2>
+            <EmojiComponent/>
             <h5>
                 by:
                 <br /> A. Gómez, M. Hervás
