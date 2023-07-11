@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import SaveButton from "./SaveButton";
+import './Tinder.css';
 
 const Tinder = ({ pngFiles, jsonFiles }) => {
   const [pngURLs, setPngURLs] = useState([]);
@@ -8,6 +9,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [userInputs, setUserInputs] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,17 +49,15 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   }, [pngFiles, jsonFiles]);
 
   const handleNext = () => {
-    setCurrentPairIndex((prevIndex) => {
-      const nextIndex = (prevIndex + 1) % pngURLs.length;
-      return isCurrentStudentPair(nextIndex) ? nextIndex : getNextStudentPairIndex(nextIndex);
-    });
+    setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
+    setIsImageExpanded(false);
   };
 
   const handlePrev = () => {
-    setCurrentPairIndex((prevIndex) => {
-      const prevStudentPairIndex = getPrevStudentPairIndex(prevIndex);
-      return isCurrentStudentPair(prevStudentPairIndex) ? prevStudentPairIndex : prevIndex;
-    });
+    setCurrentPairIndex((prevIndex) =>
+      prevIndex === 0 ? pngURLs.length - 1 : prevIndex - 1
+    );
+    setIsImageExpanded(false);
   };
 
   const isCurrentStudentPair = (index) => {
@@ -95,15 +95,33 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     });
   };
 
+  const handleImageExpand = () => {
+    setIsImageExpanded((prevExpanded) => !prevExpanded);
+  };
+
   if (!isDataLoaded) {
     return <div>Loading...</div>;
   }
 
   const currentPair = (
-      <div className="pair-container">
-        <div className="image-container">
-          <div className="png-container">
+    <div className="pair-container">
+      <div className="image-container">
+        <div className="png-container">
+          <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+        </div>
+        {isImageExpanded && (
+          <div className={`png-container expanded`}>
             <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+            <button className="collapse-button" onClick={handleImageExpand}>
+              Cerrar
+            </button>
+          </div>
+        )}
+
+        <div className="button-container">
+          <div className="arrow-row">
+            <button onClick={handlePrev}>&lt;</button>
+            <button onClick={handleNext}>&gt;</button>
           </div>
           <div className="button-container">
             <div className="arrow-row">
@@ -114,24 +132,28 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
               {currentPairIndex + 1}/{pngURLs.length}
             </div>
           </div>
+          <button onClick={handleImageExpand}>
+            {isImageExpanded ? 'Cerrar' : 'Ampliar'}
+          </button>
         </div>
-        <div className="content-container">
-          {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
-              <div>
-                <ul className="subject-list">
-                  {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
-                    const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
-                    let grades = [];
+      </div>
+      <div className="content-container">
+        {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+          <div>
+            <ul className="subject-list">
+              {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
+                const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
+                let grades = [];
 
-                    if (Array.isArray(subject.grade)) {
-                      grades = subject.grade;
-                    } else {
-                      grades = [subject.grade];
-                    }
+                if (Array.isArray(subject.grade)) {
+                  grades = subject.grade;
+                } else {
+                  grades = [subject.grade];
+                }
 
-                    return grades.map((grade, index) => {
-                      const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
-                      console.log(jsonPath); // Log the JSON path to the console
+                return grades.map((grade, index) => {
+                  const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
+                  console.log(jsonPath); // Log the JSON path to the console
 
                       return (
                           <li key={`${title}_${index}`}>
