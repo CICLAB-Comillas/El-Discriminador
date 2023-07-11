@@ -1,0 +1,39 @@
+.png-container.expanded {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 80%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    cursor: zoom-out;
+    /* Cambia el cursor a una lupa para indicar la posibilidad de hacer zoom */
+    overflow: hidden;
+    /* Evita que la imagen se desborde del contenedor */
+}
+
+.png-container.expanded:hover {
+    cursor: zoom-in;
+    /* Cambia el cursor a una lupa con un signo de "+" al pasar sobre la imagen */
+}
+
+.png-container.expanded img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    /* Agrega una transición suave al aplicar la transformación de escala */
+}
+
+.png-container.expanded:hover img {
+    transform: scale(2.4);
+    /* Aplica una escala del 240% a la imagen al pasar sobre ella */
+}
+
+.collapse-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
