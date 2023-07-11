@@ -129,71 +129,60 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
           <button onClick={handleImageExpand}>
             {isImageExpanded ? 'Cerrar' : 'Ampliar'}
           </button>
+        </div>
+      </div>
+      <div className="content-container">
+        {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+          <div>
+            <ul className="subject-list">
+              {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
+                const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
+                let grades = [];
+
+                if (Array.isArray(subject.grade)) {
+                  grades = subject.grade;
+                } else {
+                  grades = [subject.grade];
+                }
+
+                return grades.map((grade, index) => {
+                  const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
+                  console.log(jsonPath); // Log the JSON path to the console
+
+                  return (
+                    <li key={`${title}_${index}`}>
+                      <div className="subject-grade-container">
+                        <div className="subject-box">
+                          <div className="subject">{formattedTitle}</div>
+                        </div>
+                        <input
+                          type="text"
+                          className="subject-input"
+                          placeholder="Enter subject text"
+                          value={userInputs[currentPairIndex][title] || ''}
+                          onChange={(event) => handleSubjectChange(event, title)}
+                        />
+                      </div>
+                      <div className="subject-grade-container">
+                        <div className="grade-box">
+                          <div className="grade">{grade}</div>
+                        </div>
+                        <input
+                          type="text"
+                          className="grade-input"
+                          placeholder=""
+                        />
+                      </div>
+                    </li>
+                  );
+                });
+              })}
+            </ul>
+          </div>
         )}
       </div>
-      <div className="button-container">
-        <div className="arrow-row">
-          <button onClick={handlePrev}>&lt;</button>
-          <button onClick={handleNext}>&gt;</button>
-        </div>
-        <div className="pair-indicator">
-          {currentPairIndex + 1}/{pngURLs.length}
-        </div>
-      </div>
     </div>
-    <div className="content-container">
-      {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
-        <div>
-          <ul className="subject-list">
-            {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
-              const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
-              let grades = [];
-
-              if (Array.isArray(subject.grade)) {
-                grades = subject.grade;
-              } else {
-                grades = [subject.grade];
-              }
-
-              return grades.map((grade, index) => {
-                const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
-                console.log(jsonPath); // Log the JSON path to the console
-
-                return (
-                  <li key={`${title}_${index}`}>
-                    <div className="subject-grade-container">
-                      <div className="subject-box">
-                        <div className="subject">{formattedTitle}</div>
-                      </div>
-                      <input
-                        type="text"
-                        className="subject-input"
-                        placeholder="Enter subject text"
-                        value={userInputs[currentPairIndex][title] || ''}
-                        onChange={(event) => handleSubjectChange(event, title)}
-                      />
-                    </div>
-                    <div className="subject-grade-container">
-                      <div className="grade-box">
-                        <div className="grade">{grade}</div>
-                      </div>
-                      <input
-                        type="text"
-                        className="grade-input"
-                        placeholder=""
-                      />
-                    </div>
-                  </li>
-                );
-              });
-            })}
-          </ul>
-        </div>
-      )}
-    </div>
-  </div>
-);
-
+  );
 
   return (
     <>
