@@ -99,7 +99,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
             {currentPairIndex + 1}/{pngURLs.length}
           </div>
           <button onClick={handleImageExpand}>
-            {isImageExpanded ? 'Collapse' : 'Expand'}
+            {isImageExpanded ? 'Cerrar' : 'Ampliar'}
           </button>
         </div>
       </div>
