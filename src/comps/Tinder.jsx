@@ -12,31 +12,31 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   useEffect(() => {
     const fetchData = async () => {
       const pngURLs = await Promise.all(
-        pngFiles.map((file) => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.readAsDataURL(file);
-          });
-        })
+          pngFiles.map((file) => {
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.readAsDataURL(file);
+            });
+          })
       );
       setPngURLs(pngURLs);
 
       const jsonContent = await Promise.all(
-        jsonFiles.map((file) => {
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              try {
-                const json = JSON.parse(reader.result);
-                resolve(json);
-              } catch (error) {
-                reject(error);
-              }
-            };
-            reader.readAsText(file);
-          });
-        })
+          jsonFiles.map((file) => {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                try {
+                  const json = JSON.parse(reader.result);
+                  resolve(json);
+                } catch (error) {
+                  reject(error);
+                }
+              };
+              reader.readAsText(file);
+            });
+          })
       );
       setJsonData(jsonContent);
       setIsDataLoaded(true);
@@ -100,89 +100,89 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   }
 
   const currentPair = (
-    <div className="pair-container">
-      <div className="image-container">
-        <div className="png-container">
-          <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+      <div className="pair-container">
+        <div className="image-container">
+          <div className="png-container">
+            <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+          </div>
+          <div className="button-container">
+            <div className="arrow-row">
+              <button onClick={handlePrev}>&lt;</button>
+              <button onClick={handleNext}>&gt;</button>
+            </div>
+            <div className="pair-indicator">
+              {currentPairIndex + 1}/{pngURLs.length}
+            </div>
+          </div>
         </div>
-        <div className="button-container">
-          <div className="arrow-row">
-            <button onClick={handlePrev}>&lt;</button>
-            <button onClick={handleNext}>&gt;</button>
-          </div>
-          <div className="pair-indicator">
-            {currentPairIndex + 1}/{pngURLs.length}
-          </div>
+        <div className="content-container">
+          {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+              <div>
+                <ul className="subject-list">
+                  {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
+                    const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
+                    let grades = [];
+
+                    if (Array.isArray(subject.grade)) {
+                      grades = subject.grade;
+                    } else {
+                      grades = [subject.grade];
+                    }
+
+                    return grades.map((grade, index) => {
+                      const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
+                      console.log(jsonPath); // Log the JSON path to the console
+
+                      return (
+                          <li key={`${title}_${index}`}>
+                            <div className="subject-grade-container">
+                              <div className="subject-box">
+                                <div className="subject">{formattedTitle}</div>
+                              </div>
+                              <input
+                                  type="text"
+                                  className="subject-input"
+                                  placeholder="Enter subject text"
+                                  value={userInputs[currentPairIndex][title] || ''}
+                                  onChange={(event) => handleSubjectChange(event, title)}
+                              />
+                            </div>
+                            <div className="subject-grade-container">
+                              <div className="grade-box">
+                                <div className="grade">{grade}</div>
+                              </div>
+                              <input
+                                  type="text"
+                                  className="grade-input"
+                                  placeholder=""
+                              />
+                            </div>
+                          </li>
+                      );
+                    });
+                  })}
+                </ul>
+              </div>
+          )}
         </div>
       </div>
-      <div className="content-container">
-       {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
-  <div>
-    <ul className="subject-list">
-      {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
-        const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
-        let grades = [];
-
-        if (Array.isArray(subject.grade)) {
-          grades = subject.grade;
-        } else {
-          grades = [subject.grade];
-        }
-
-        return grades.map((grade, index) => {
-          const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
-          console.log(jsonPath); // Log the JSON path to the console
-
-          return (
-            <li key={`${title}_${index}`}>
-              <div className="subject-grade-container">
-                <div className="subject-box">
-                  <div className="subject">{formattedTitle}</div>
-                </div>
-                <input
-                  type="text"
-                  className="subject-input"
-                  placeholder="Enter subject text"
-                  value={userInputs[currentPairIndex][title] || ''}
-                  onChange={(event) => handleSubjectChange(event, title)}
-                />
-              </div>
-              <div className="subject-grade-container">
-                <div className="grade-box">
-                  <div className="grade">{grade}</div>
-                </div>
-                <input
-                  type="text"
-                  className="grade-input"
-                  placeholder=""
-                />
-              </div>
-            </li>
-          );
-        });
-      })}
-    </ul>
-  </div>
-)}
-      </div>
-    </div>
   );
 
   return (
-    <>
-      <div className="tinder-wrapper">
-        <div className="tinder-container">{currentPair}</div>
-      </div>
-      {pngFiles.length > 0 && jsonFiles.length > 0 && (
-        <div className="card">
-          <SaveButton
-            pngFile={pngFiles[currentPairIndex]}
-            jsonFile={jsonFiles[currentPairIndex]}
-            userInputs={userInputs[currentPairIndex]}
-          />
+      <>
+        <div className="tinder-wrapper">
+          <div className="tinder-container">{currentPair}</div>
         </div>
-      )}
-    </>
+        {pngFiles.length > 0 && jsonFiles.length > 0 && (
+            <div className="card">
+              <SaveButton
+                  pngFile={pngFiles[currentPairIndex]}
+                  jsonFile={jsonFiles[currentPairIndex]}
+                  userInputs={userInputs[currentPairIndex]}
+              />
+            </div>
+        )}
+      </>
   );
 };
 
@@ -192,3 +192,5 @@ Tinder.propTypes = {
 };
 
 export default Tinder;
+
+

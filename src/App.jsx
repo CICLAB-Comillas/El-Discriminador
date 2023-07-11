@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
 import UploadButton from "./comps/UploadButton";
 import './App.css';
-import Tinder from "./comps/Tinder.jsx";
-import SaveButton from "./comps/SaveButton";
+import TinderParent from "./comps/TinderParent.jsx";
 
 function App() {
-    const [pngFiles, setPngFiles] = useState([]);
-    const [jsonFiles, setJsonFiles] = useState([]);
-    const [userInputs, setUserInputs] = useState({});
+    const [folderMap, setFolderMap] = useState(new Map());
 
-    const handleFileUpdate = (newPngFiles, newJsonFiles) => {
-        setPngFiles(newPngFiles);
-        setJsonFiles(newJsonFiles);
-    };
+    const handleFileUpdate = (newFolderNames, newFolderMap, newPngFiles, newJsonFiles ) => {
+        console.log('App.jsx: handleFileUpdate');
+        console.log('PNG Files:', newPngFiles);
+        console.log('JSON Files:', newJsonFiles);
+        console.log('Folder Names:', newFolderNames);
+        console.log('Folder Map:', newFolderMap);
 
-    const handleUserInputsChange = (inputs) => {
-        setUserInputs(inputs);
+
+        setFolderMap(newFolderMap);
+
+        // logs in a console if the folderMap is empty
+        if (newFolderMap.size === 0) {
+            console.log('Folder Map is empty');
+        } else {
+            console.log('Folder Map is not empty');
+        }
+
     };
 
     return (
-        <div className={"big-wrapper"}>
+        <div className="big-wrapper">
             <div>
                 <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
                     <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo" />
@@ -34,18 +41,18 @@ function App() {
             </h5>
 
             <div className="card">
-                <UploadButton onFileUpload={handleFileUpdate} />
+                <UploadButton onFileUpload={handleFileUpdate} folderMap={folderMap} />
                 <br />
-                {pngFiles.length > 0 && jsonFiles.length > 0 && (
+                {folderMap.size > 0 && (
                     <div>
-                        <div className={"fileDisplay"}><p>{"Upload Successful"}</p></div>
+                        <div className="fileDisplay"><p>Upload Successful</p></div>
                     </div>
                 )}
             </div>
 
-            {pngFiles.length > 0 && jsonFiles.length > 0 && (
+            {folderMap.size > 0 && (
                 <div className="card">
-                    <Tinder pngFiles={pngFiles} jsonFiles={jsonFiles} onUserInputsChange={handleUserInputsChange} />
+                    <TinderParent map={folderMap} />
                 </div>
             )}
 
@@ -62,3 +69,4 @@ function App() {
 }
 
 export default App;
+
