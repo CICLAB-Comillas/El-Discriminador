@@ -82,14 +82,18 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
   const currentPair = (
     <div className="pair-container">
       <div className="image-container">
-        <div className={`png-container ${isImageExpanded ? 'expanded' : ''}`}>
+        <div className="png-container">
           <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
-          {isImageExpanded && (
+        </div>
+        {isImageExpanded && (
+          <div className={`png-container expanded`}>
+            <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
             <button className="collapse-button" onClick={handleImageExpand}>
               Cerrar
             </button>
-          )}
-        </div>
+          </div>
+        )}
+
         <div className="button-container">
           <div className="arrow-row">
             <button onClick={handlePrev}>&lt;</button>
