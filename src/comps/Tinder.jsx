@@ -103,18 +103,31 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     return <div>Loading...</div>;
   }
 
-const currentPair = (
-  <div className="pair-container">
-    <div className="image-container">
-      <div className={`png-container ${isImageExpanded ? 'expanded' : ''}`}>
-        <img
-          src={pngURLs[currentPairIndex]}
-          alt={`PNG ${currentPairIndex + 1}`}
-          onClick={handleImageExpand}
-        />
+  const currentPair = (
+    <div className="pair-container">
+      <div className="image-container">
+        <div className="png-container">
+          <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+        </div>
         {isImageExpanded && (
-          <button className="collapse-button" onClick={handleImageExpand}>
-            Cerrar
+          <div className={`png-container expanded`}>
+            <img src={pngURLs[currentPairIndex]} alt={`PNG ${currentPairIndex + 1}`} />
+            <button className="collapse-button" onClick={handleImageExpand}>
+              Cerrar
+            </button>
+          </div>
+        )}
+
+        <div className="button-container">
+          <div className="arrow-row">
+            <button onClick={handlePrev}>&lt;</button>
+            <button onClick={handleNext}>&gt;</button>
+          </div>
+          <div className="pair-indicator">
+            {currentPairIndex + 1}/{pngURLs.length}
+          </div>
+          <button onClick={handleImageExpand}>
+            {isImageExpanded ? 'Cerrar' : 'Ampliar'}
           </button>
         )}
       </div>
