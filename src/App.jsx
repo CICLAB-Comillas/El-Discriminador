@@ -57,11 +57,11 @@ function App() {
                 </div>
             )}
 
-            <p className="read-the-docs">
-                {/* eslint-disable-next-line react/no-unescaped-entities */}
-                "El que vale vale y el que no, a ICADE" <br />
-                - El Discriminador.
-            </p>
+            {/*<p className="read-the-docs">*/}
+            {/*    /!* eslint-disable-next-line react/no-unescaped-entities *!/*/}
+            {/*    /!*"El que vale vale y el que no, a ICADE" <br />*!/*/}
+            {/*    /!*- El Discriminador.*!/*/}
+            {/*</p>*/}
             <p className="read-the-docs">
                 To learn more click on the CICLAB logo or visit {'https://github.com/CICLAB-Comillas'}
             </p>
