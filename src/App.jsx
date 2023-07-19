@@ -7,7 +7,7 @@ import EmojiComponent from "./comps/EmojiComponent.jsx";
 function App() {
     const [folderMap, setFolderMap] = useState(new Map());
 
-    const handleFileUpdate = (newFolderNames, newFolderMap, newPngFiles, newJsonFiles ) => {
+    const handleFileUpdate = (newFolderNames, newFolderMap, newPngFiles, newJsonFiles) => {
         console.log('App.jsx: handleFileUpdate');
         console.log('PNG Files:', newPngFiles);
         console.log('JSON Files:', newJsonFiles);
@@ -33,9 +33,8 @@ function App() {
                     <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo" />
                 </a>
             </div>
-            <h1>El Discriminador v.4</h1>
-            <h2>Applicant filtering system</h2>
-            <EmojiComponent/>
+            <h1>Herramienta Secretaría</h1>
+            <h2>Filtro de notas</h2>
             <h5>
                 by:
                 <br /> A. Gómez, M. Hervás
