@@ -2,52 +2,50 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import JSZip from 'jszip';
 
-const SaveButton = ({ pngFile, jsonFile, userInputs }) => {
+const SaveButton = ({ folderData }) => {
   const handleSave = () => {
     const zip = new JSZip();
 
-    // Create a folder for the pair of PNG and JSON data
-    const folder = zip.folder('pair');
+    folderData.forEach(({ folderName, pngFiles, jsonFiles }) => {
+      const studentFolder = zip.folder(folderName);
 
-    // Add the PNG file to the folder
-    folder.file('image.png', pngFile);
+      // Add PNG files to the student's folder
+      pngFiles.forEach((pngFile, index) => {
+        studentFolder.file(`image_${index + 1}.png`, pngFile);
+      });
 
-    // Add the JSON file to the folder
-    const jsonFileName = 'data.json';
-    const jsonDataString = JSON.stringify(jsonFile, null, 2);
-    folder.file(jsonFileName, jsonDataString);
-
-    // Add the JSON with user input to the folder
-    const userInputFileName = 'user_input.json';
-    const userInputDataString = JSON.stringify(userInputs, null, 2);
-    folder.file(userInputFileName, userInputDataString);
+      // Add JSON files to the student's folder
+      jsonFiles.forEach((jsonFile, index) => {
+        studentFolder.file(`data_${index + 1}.json`, JSON.stringify(jsonFile, null, 2));
+      });
+    });
 
     // Generate the ZIP file asynchronously
     zip.generateAsync({ type: 'blob' }).then((content) => {
       // Create a download link and trigger the download
       const downloadLink = document.createElement('a');
-      const zipFileName = 'folder.zip';
+      const zipFileName = 'student_data.zip';
       downloadLink.href = URL.createObjectURL(content);
       downloadLink.download = zipFileName;
       downloadLink.click();
     });
   };
 
-  console.log('pngFile:', pngFile);
-  console.log('jsonFile:', jsonFile);
-  console.log('userInputs:', userInputs);
-
   return (
     <div>
-      <button onClick={handleSave}>Save as ZIP</button>
+      <button onClick={handleSave}>Save All Student Data as ZIP</button>
     </div>
   );
 };
 
 SaveButton.propTypes = {
-  pngFile: PropTypes.instanceOf(File).isRequired,
-  jsonFile: PropTypes.object.isRequired,
-  userInputs: PropTypes.object.isRequired,
+  folderData: PropTypes.arrayOf(
+    PropTypes.shape({
+      folderName: PropTypes.string.isRequired,
+      pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
+      jsonFiles: PropTypes.arrayOf(PropTypes.object).isRequired,
+    })
+  ),
 };
 
 export default SaveButton;
