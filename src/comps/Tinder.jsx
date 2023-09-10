@@ -143,11 +143,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
       </div>
       {pngFiles.length > 0 && jsonFiles.length > 0 && (
         <div className="card">
-          <SaveButton
-            pngFile={pngFiles[currentPairIndex]}
-            jsonFile={jsonFiles[currentPairIndex]}
-            userInputs={userInputs[currentPairIndex]}
-          />
+          <SaveButton pngFiles={pngFiles} jsonFiles={jsonFiles} userInputs={userInputs} />
         </div>
       )}
     </>
