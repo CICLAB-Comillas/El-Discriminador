@@ -6,13 +6,23 @@ const TinderParent = ({ map }) => {
     const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
     const outerFolder = Array.from(map.keys())[0]; // Assuming there's always at least one key, "gui_data" in your case
     const keys = Array.from(map.get(outerFolder).keys()); // Fetch the subfolder keys (001, 002, 003)
+    const [resetCurrentPairIndex, setResetCurrentPairIndex] = useState(false);
+
+    const resetCurrentPairIndexToZero = () => {
+        setResetCurrentPairIndex((prevReset) => !prevReset);
+    };
+    //I added this function because, Tinder  failed to render anything when for e.x. (I am in the second
+    //file of the second student and want to go to the first student, but he only has one file). This
+    //solved the issue, but its a bit jittery when switching from that 2-2 to 1-1.
 
     const handleNextKey = () => {
+        resetCurrentPairIndexToZero(); //To go to 0'th file on student change
         setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % keys.length);
         getFilesForCurrentKey();
     };
 
     const handlePrevKey = () => {
+        resetCurrentPairIndexToZero(); //To go to 0'th file on student change
         setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + keys.length) % keys.length);
         getFilesForCurrentKey();
     };
@@ -46,7 +56,6 @@ const TinderParent = ({ map }) => {
         return [pngFiles, jsonFiles];
     };
 
-
     const [pngFiles, jsonFiles] = getFilesForCurrentKey();
 
     return (
@@ -57,6 +66,7 @@ const TinderParent = ({ map }) => {
             <Tinder
                 pngFiles={pngFiles}
                 jsonFiles={jsonFiles}
+                resetCurrentPairIndex={resetCurrentPairIndex} //To go to 0'th file on student change
             />
         </>
     );

@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import SaveButton from './SaveButton';
+import SaveButton from "./SaveButton.jsx";
 import './Tinder.css';
 import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
-const Tinder = ({ pngFiles, jsonFiles }) => {
+const Tinder = ({ pngFiles, jsonFiles, resetCurrentPairIndex }) => {
   const [pngURLs, setPngURLs] = useState([]);
   const [jsonData, setJsonData] = useState([]);
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [userInputs, setUserInputs] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [zoom, setZoom] = useState(1); // State to manage zoom level
+
+  useEffect(() => {
+    if (resetCurrentPairIndex) {
+        setCurrentPairIndex(0);
+    }
+  }, [resetCurrentPairIndex]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +27,8 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
             return url;
           })
         );
+
+        console.log("PNG URLS", pngFiles)
 
         const jsonContent = await Promise.all(
           jsonFiles.map(async (file) => {
@@ -42,6 +50,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
     fetchData();
   }, [pngFiles, jsonFiles]);
 
+
   const handleNext = () => {
     setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
     setZoom(1); // Reset zoom when moving to the next pair
@@ -61,6 +70,7 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
         ...updatedInputs[currentPairIndex],
         [title]: event.target.value,
       };
+
       return updatedInputs;
     });
   };
@@ -89,25 +99,23 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
               </div>
             </div>
             <div className="content-container">
-              {jsonFiles[currentPairIndex] && jsonData[currentPairIndex] && (
+              {jsonData[currentPairIndex] && (
                 <div>
                   <ul className="subject-list">
-                    {Object.entries(jsonData[currentPairIndex]).map(([title, subject]) => {
-                      const formattedTitle = title.replace(/_/g, ' '); // Replace underscores with spaces
+                    {Object.entries(jsonData[currentPairIndex]).map(([subject_name, subject_properties]) => {
+                      const formattedTitle = subject_name.replace(/_/g, ' '); // Replace underscores with spaces
                       let grades = [];
 
-                      if (Array.isArray(subject.grade)) {
-                        grades = subject.grade;
+                      if (Array.isArray(subject_properties.grade)) {
+                        grades = subject_properties.grade;
                       } else {
-                        grades = [subject.grade];
+                        grades = [subject_properties.grade];
                       }
 
                       return grades.map((grade, index) => {
-                        const jsonPath = `${currentPairIndex}.${title}.grade[${index}]`;
-                        console.log(jsonPath); // Log the JSON path to the console
-
+                      console.log(`Key for subject at index ${index}: ${subject_name}_${index}`);
                         return (
-                          <li key={`${title}_${index}`}>
+                          <li key={`${subject_name}_${index}`}>
                             <div className="subject-grade-container">
                               <div className="subject-box">
                                 <div className="subject">{formattedTitle}</div>
@@ -116,8 +124,8 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
                                 type="text"
                                 className="subject-input"
                                 placeholder="Enter subject text"
-                                value={userInputs[currentPairIndex][title] || ''}
-                                onChange={(event) => handleSubjectChange(event, title)}
+                                value={userInputs[currentPairIndex][subject_name] || ''}
+                                onChange={(event) => handleSubjectChange(event, subject_name)}
                               />
                             </div>
                             <div className="subject-grade-container">
@@ -141,18 +149,22 @@ const Tinder = ({ pngFiles, jsonFiles }) => {
           </div>
         </div>
       </div>
-      {pngFiles.length > 0 && jsonFiles.length > 0 && (
-        <div className="card">
-          <SaveButton pngFiles={pngFiles} jsonFiles={jsonFiles} userInputs={userInputs} />
-        </div>
-      )}
+      {/*{pngFiles.length > 0 && jsonFiles.length > 0 && (*/}
+      {/*  <div className="card">*/}
+      {/*    <SaveButton pngFiles={pngFiles} jsonFiles={jsonData} userInputs={userInputs} />*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </>
   );
 };
+// It used to be like this: <SaveButton pngFiles={pngFiles} jsonFiles={jsonFiles} userInputs={userInputs} />
+// But jsonFiles was passing information about the file, rather than the content
+
 
 Tinder.propTypes = {
   pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
   jsonFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
+  resetCurrentPairIndex: PropTypes.func.isRequired,
 };
 
 export default Tinder;

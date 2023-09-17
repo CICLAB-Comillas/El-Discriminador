@@ -2,6 +2,10 @@ import PropTypes from 'prop-types';
 import JSZip from 'jszip';
 
 const SaveButton = ({ pngFiles, jsonFiles, userInputs }) => {
+
+
+  console.log("Input JSON FILES", jsonFiles);
+
   const handleSave = () => {
     const zip = new JSZip();
 
@@ -12,10 +16,12 @@ const SaveButton = ({ pngFiles, jsonFiles, userInputs }) => {
       // Add the PNG file to the pair folder
       pairFolder.file('image.png', pngFiles[i]);
 
+
       // Add the JSON file to the pair folder
       const jsonFileName = `data${i + 1}.json`;
       const jsonDataString = JSON.stringify(jsonFiles[i], null, 2);
       pairFolder.file(jsonFileName, jsonDataString);
+
 
       // Add the JSON with user input to the pair folder
       const userInputFileName = `user_input${i + 1}.json`;

@@ -87,8 +87,13 @@ const UploadButton = ({ tagText = 'UPLOAD A FOLDER', onFileUpload}) => {
 
     console.log('Finished uploading files');
 
+    console.log('New folderMap', folderMap);
+    console.log('allFolderNames', allFolderNames);
+
     // Convert folderMap back to an array of objects
     const folderNames = Array.from(folderMap.values());
+
+    console.log('ARRAY', folderNames);
 
     onFileUpload(folderNames, allFolderNames);
     setProgress(0); // Reset progress after uploading files
