@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import PropTypes from 'prop-types';
 
 function ImageZoomInOut({ imageUrl }) {
   const [scale, setScale] = useState(1);
@@ -85,5 +86,9 @@ function ImageZoomInOut({ imageUrl }) {
     </div>
   );
 }
+
+ImageZoomInOut.propTypes = {
+  imageUrl: PropTypes.string.isRequired,
+};
 
 export default ImageZoomInOut;

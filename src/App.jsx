@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import UploadButton from "./comps/UploadButton";
+import Tinder from "./comps/Tinder.jsx"; // Import the merged Tinder component
 import './App.css';
-import TinderParent from "./comps/TinderParent.jsx";
 
 function App() {
   const [folderMap, setFolderMap] = useState(new Map());
@@ -27,7 +27,7 @@ function App() {
     <div className="big-wrapper">
       <div>
         <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
-          <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo" />
+          <img src='/logo-ciclab.png' className="logo ciclab" alt="CICLAB logo" />
         </a>
       </div>
       <h1>Herramienta Secretaría</h1>
@@ -48,8 +48,7 @@ function App() {
 
       {folderMap.size > 0 && (
         <div className="card">
-          <TinderParent map={folderMap} />
-            {console.log('map prop in TinderParent:', folderMap)}
+          <Tinder map={folderMap} />
         </div>
       )}
       <p className="read-the-docs">

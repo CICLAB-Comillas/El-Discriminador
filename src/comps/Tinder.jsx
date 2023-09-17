@@ -1,30 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import SaveButton from "./SaveButton.jsx";
 import './Tinder.css';
+import SaveButton from "./SaveButton.jsx";
 import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
-const Tinder = ({ pngFiles, jsonFiles, resetCurrentPairIndex }) => {
+const Tinder = ({map}) => {
   const [pngURLs, setPngURLs] = useState([]);
   const [jsonData, setJsonData] = useState([]);
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [userInputs, setUserInputs] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [zoom, setZoom] = useState(1); // State to manage zoom level
+  const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
+  const outerFolder = Array.from(map.keys())[0]; // Assuming there's always at least one key, "gui_data" in your case
+  const keys = Array.from(map.get(outerFolder).keys()); // Fetch the subfolder keys (001, 002, 003)
 
-  useEffect(() => {
-    if (resetCurrentPairIndex) {
+
+  const handleNextKey = () => {
         setCurrentPairIndex(0);
-    }
-  }, [resetCurrentPairIndex]);
+        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % keys.length);
+        getFilesForCurrentKey();
+    };
+
+    const handlePrevKey = () => {
+        setCurrentPairIndex(0);
+        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + keys.length) % keys.length);
+        getFilesForCurrentKey();
+    };
+
+    const getCurrentKey = () => {
+        return keys[currentKeyIndex];
+    };
+
+    const getFilesForCurrentKey = () => {
+        const currentKey = getCurrentKey();
+        const pngFiles = [];
+        const jsonFiles = [];
+
+        const subfolderMap = map.get(outerFolder).get(currentKey);
+        if (subfolderMap instanceof Array) {
+
+            subfolderMap.forEach(file => {
+                // Using MIME types instead of file extensions
+                if (file.type === 'image/png') {
+                    pngFiles.push(file);
+                } else if (file.type === 'application/json') {
+                    jsonFiles.push(file);
+                }
+            });
+        }
+
+        console.log("get json files" ,jsonFiles.length);
+        console.log("get png files" ,pngFiles.length);
+
+        return [pngFiles, jsonFiles];
+    };
+
+    const [pngFiles, jsonFiles] = getFilesForCurrentKey();
+
+
+    console.log("TINDER PARENT FILES", jsonFiles);
+    console.log("TINDER PARENT FILES", pngFiles);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const pngURLs = await Promise.all(
           pngFiles.map(async (file) => {
-            const url = await readFileAsDataURL(file);
-            return url;
+            return await readFileAsDataURL(file);
           })
         );
 
@@ -99,6 +143,11 @@ const Tinder = ({ pngFiles, jsonFiles, resetCurrentPairIndex }) => {
               </div>
             </div>
             <div className="content-container">
+                <div className="Student-name-and-arrow-container">
+                  <button onClick={handlePrevKey}>&lt; Previous</button>
+                  <h1>{getCurrentKey()}</h1>
+                  <button onClick={handleNextKey}>Next &gt;</button>
+                </div>
               {jsonData[currentPairIndex] && (
                 <div>
                   <ul className="subject-list">
@@ -149,11 +198,11 @@ const Tinder = ({ pngFiles, jsonFiles, resetCurrentPairIndex }) => {
           </div>
         </div>
       </div>
-      {/*{pngFiles.length > 0 && jsonFiles.length > 0 && (*/}
-      {/*  <div className="card">*/}
-      {/*    <SaveButton pngFiles={pngFiles} jsonFiles={jsonData} userInputs={userInputs} />*/}
-      {/*  </div>*/}
-      {/*)}*/}
+      {pngFiles.length > 0 && jsonFiles.length > 0 && (
+        <div className="card">
+          <SaveButton pngFiles={pngFiles} jsonFiles={jsonData} userInputs={userInputs} />
+        </div>
+      )}
     </>
   );
 };
@@ -162,12 +211,10 @@ const Tinder = ({ pngFiles, jsonFiles, resetCurrentPairIndex }) => {
 
 
 Tinder.propTypes = {
-  pngFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
-  jsonFiles: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
-  resetCurrentPairIndex: PropTypes.func.isRequired,
+  map: PropTypes.object.isRequired,
 };
 
-export default Tinder;
+export default Tinder
 
 async function readFileAsDataURL(file) {
   return new Promise((resolve) => {
