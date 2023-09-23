@@ -65,15 +65,9 @@ const Tinder = ({map}) => {
       return keys[currentKeyIndex];
     };
 
-    const keys = Array.from(map.get(outerFolder).keys());
-
-
     fetchData();
   }, [map, outerFolder, currentKeyIndex]);
 
-
-  console.log('pngFiles:', pngFiles);
-  console.log('jsonFiles:', jsonFiles);
 
   const handleNextKey = () => {
         setCurrentPairIndex(0);
