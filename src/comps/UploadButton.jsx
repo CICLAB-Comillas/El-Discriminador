@@ -1,154 +1,142 @@
-import React, { useRef, useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import PropTypes from 'prop-types';
 
-const UploadButton = ({ tagText = 'UPLOAD A FOLDER', onFileUpload }) => {
-  const fileInputRef = useRef(null);
-  const [selectedFolder, setSelectedFolder] = useState(null);
-  const [fileURLs, setFileURLs] = useState([]);
+const UploadButton = ({ tagText = 'UPLOAD A FOLDER', onFileUpload}) => {
   const [progress, setProgress] = useState(0);
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = useCallback((event) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const folder = files[0];
-      setSelectedFolder(folder);
-
-      const fileURLs = [];
-      const readerPromises = [];
-
-      const entries = folder.webkitEntries || folder.entries || [];
-
-      const readEntries = (entries) => {
-        const reader = new FileReader();
-        const readerPromise = new Promise((resolve) => {
-          reader.onload = () => {
-            const fileContent = reader.result;
-            resolve(fileContent);
-          };
-        });
-
-        entries.forEach((entry) => {
-          if (entry.isFile) {
-            const file = entry.file((file) => {
-              const fileURL = URL.createObjectURL(file);
-              fileURLs.push(fileURL);
-              reader.readAsText(file);
-            });
-          } else if (entry.isDirectory) {
-            const reader = entry.createReader();
-            reader.readEntries(readEntries);
-          }
-        });
-
-        readerPromises.push(readerPromise);
-      };
-
-      readEntries(entries);
-
-      Promise.all(readerPromises).then(() => {
-        onFileUpload(fileURLs);
-      });
-
-      setFileURLs(fileURLs);
-    }
-  }, [onFileUpload]);
-
   const uploadFile = useCallback(
-    (file) => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 100); // Simulate upload delay
-      });
-    },
-    []
+      (file) => {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 100); // Simulate upload delay
+        });
+      },
+      []
   );
 
-  const handleDrop = useCallback(async (acceptedFiles) => {
-    const pngFiles = [];
-    const jsonFiles = [];
 
-    // Separate the dropped files into PNG and JSON files based on their extensions
+  const extractFolderNames = (files) => {
+    const folderMap = new Map();
+
+    for (const file of files) {
+      const path = file.webkitRelativePath || file.mozRelativePath || file.relativePath || file.name;
+      const [mainFolder, subfolder] = path.split('/');
+
+      if (!folderMap.has(mainFolder)) {
+        folderMap.set(mainFolder, new Map());
+      }
+
+      if (subfolder) {
+        const subfolderMap = folderMap.get(mainFolder);
+        if (!subfolderMap.has(subfolder)) {
+          subfolderMap.set(subfolder, []);
+        }
+        subfolderMap.get(subfolder).push(file);
+      }
+    }
+
+    console.log('Folder Map:', folderMap); // Log the final folderMap
+    return folderMap;
+  };
+
+
+
+
+  const handleDrop = useCallback(async (acceptedFiles) => {
+    console.log('Handling dropped files');
+
+    const folderMap = new Map(); // Map to store files grouped by folder
+    const allFolderNames = extractFolderNames(acceptedFiles); // Extract all folder names
+
+    // Group the dropped files by their parent folder
     acceptedFiles.forEach((file) => {
+      const parentFolder = file.webkitRelativePath.split('/')[0]; // Get the parent folder name
+      if (!folderMap.has(parentFolder)) {
+        folderMap.set(parentFolder, {
+          pngFiles: [],
+          jsonFiles: [],
+          folderName: parentFolder,
+        });
+      }
+
+      const folder = folderMap.get(parentFolder);
       if (file.type === 'image/png') {
-        pngFiles.push(file);
+        folder.pngFiles.push(file);
       } else if (file.type === 'application/json') {
-        jsonFiles.push(file);
+        folder.jsonFiles.push(file);
       }
     });
 
-    const totalFiles = pngFiles.length + jsonFiles.length;
+    let totalFiles = 0;
     let loadedFiles = 0;
 
-    // Simulate the upload progress with a delay
-    for (const file of acceptedFiles) {
-      await uploadFile(file);
-      loadedFiles++;
-      const progress = Math.min(Math.floor((loadedFiles / totalFiles) * 100), 100);
-      setProgress(progress);
+    // Count total number of files
+    for (const { pngFiles, jsonFiles } of folderMap.values()) {
+      totalFiles += pngFiles.length + jsonFiles.length;
     }
 
-    onFileUpload(pngFiles, jsonFiles);
+    // Simulate the upload progress with a delay
+    for (const { pngFiles, jsonFiles } of folderMap.values()) {
+      for (const file of pngFiles.concat(jsonFiles)) {
+        await uploadFile(file);
+        loadedFiles++;
+        const progress = Math.min(Math.floor((loadedFiles / totalFiles) * 100), 100);
+        setProgress(progress);
+      }
+    }
+
+    console.log('Finished uploading files');
+
+    console.log('New folderMap', folderMap);
+    console.log('allFolderNames', allFolderNames);
+
+    // Convert folderMap back to an array of objects
+    const folderNames = Array.from(folderMap.values());
+
+    console.log('ARRAY', folderNames);
+
+    onFileUpload(folderNames, allFolderNames);
     setProgress(0); // Reset progress after uploading files
   }, [onFileUpload, uploadFile]);
 
+
+
+
+
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleDrop,
+    noClick: true,
+    noKeyboard: true,
     multiple: true,
-    directory: true,
     accept: ['.png', '.json'],
   });
 
   return (
-    <div className="dropzone-wrapper">
-      <div
-        {...getRootProps()}
-        className={`tag ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}
-      >
-        <input
-          {...getInputProps()}
-          ref={fileInputRef}
-          type="file"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-          webkitdirectory="true"
-          directory="true"
-        />
-        <div className="tag-text">{tagText}</div>
-        <div className={`dropzone-text ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}>
-          {isDragActive ? 'Drop the files here' : 'Drag and drop or click to upload files'}
-        </div>
-      </div>
-      {selectedFolder && (
-        <div>
-          <h4>Selected Folder:</h4>
-          <div className="folderDisplay">
-            <span className="folderIcon">&#128193;</span>
-            <p className="folderName">{selectedFolder.name}</p>
+      <div className="dropzone-wrapper">
+        <div {...getRootProps()} className={`tag ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}>
+          <input {...getInputProps()} />
+          <div className="tag-text">{tagText}</div>
+          <div className={`dropzone-text ${isDragActive ? 'dropzone-active' : 'dropzone-inactive'}`}>
+            {isDragActive ? 'Drop the files here' : 'Drag and drop to upload files'}
           </div>
         </div>
-      )}
-      {progress > 0 && (
-        <div className="progress-bar-wrapper">
-          <progress value={progress} max={100} style={{ width: '100%' }} />
-          <p>{`File upload progress: ${progress}%`}</p>
-        </div>
-      )}
-      {fileURLs.length > 0 && (
-        <div className="fileDisplay">
-          <p>{`File Uploaded: ${fileURLs[fileURLs.length - 1]}`}</p>
-        </div>
-      )}
-    </div>
+        {progress > 0 && (
+            <div className="progress-bar-wrapper">
+              <progress value={progress} max={100} style={{ width: '100%' }} />
+              <p>{`File upload progress: ${progress}%`}</p>
+            </div>
+        )}
+      </div>
   );
 };
 
 UploadButton.propTypes = {
   tagText: PropTypes.string,
   onFileUpload: PropTypes.func.isRequired,
-};
+  folderMap: PropTypes.instanceOf(Map).isRequired, // Add this line;
+}
+
 
 export default UploadButton;
+

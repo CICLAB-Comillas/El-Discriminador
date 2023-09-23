@@ -1,64 +1,64 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import UploadButton from "./comps/UploadButton";
+import Tinder from "./comps/Tinder.jsx"; // Import the merged Tinder component
 import './App.css';
-import Tinder from "./comps/Tinder.jsx";
-import SaveButton from "./comps/SaveButton";
 
 function App() {
-    const [pngFiles, setPngFiles] = useState([]);
-    const [jsonFiles, setJsonFiles] = useState([]);
-    const [userInputs, setUserInputs] = useState({});
+  const [folderMap, setFolderMap] = useState(new Map());
 
-    const handleFileUpdate = (newPngFiles, newJsonFiles) => {
-        setPngFiles(newPngFiles);
-        setJsonFiles(newJsonFiles);
-    };
+  const handleFileUpdate = (newFolderNames, newFolderMap, newPngFiles, newJsonFiles) => {
+    console.log('App.jsx: handleFileUpdate');
+    console.log('PNG Files:', newPngFiles);
+    console.log('JSON Files:', newJsonFiles);
+    console.log('Folder Names:', newFolderNames);
+    console.log('Folder Map:', newFolderMap);
 
-    const handleUserInputsChange = (inputs) => {
-        setUserInputs(inputs);
-    };
+    setFolderMap(newFolderMap);
 
-    return (
-        <div className={"big-wrapper"}>
-            <div>
-                <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
-                    <img src="src/assets/logo-ciclab.png" className="logo ciclab" alt="CICLAB logo" />
-                </a>
-            </div>
-            <h1>El Discriminador v.2</h1>
-            <h2>Applicant filtering system</h2>
-            <h5>
-                by:
-                <br /> A. Gómez, M. Hervás
-                <br /> M. Liz, A. Quintana
-            </h5>
+    // logs in a console if the folderMap is empty
+    if (newFolderMap.size === 0) {
+      console.log('Folder Map is empty');
+    } else {
+      console.log('Folder Map is not empty');
+    }
+  };
 
-            <div className="card">
-                <UploadButton onFileUpload={handleFileUpdate} />
-                <br />
-                {pngFiles.length > 0 && jsonFiles.length > 0 && (
-                    <div>
-                        <div className={"fileDisplay"}><p>{"Upload Successful"}</p></div>
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="big-wrapper">
+      <div>
+        <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
+          <img src='/logo-ciclab.png' className="logo ciclab" alt="CICLAB logo" />
+        </a>
+      </div>
+      <h1>Herramienta Secretaría</h1>
+      <h2>Filtro de notas</h2>
+      <h5>
+        by:
+        <br /> A. Gómez, M. Hervás
+        <br /> M. Liz, A. Quintana
+      </h5>
 
-            {pngFiles.length > 0 && jsonFiles.length > 0 && (
-                <div className="card">
-                    <Tinder pngFiles={pngFiles} jsonFiles={jsonFiles} onUserInputsChange={handleUserInputsChange} />
-                </div>
-            )}
+      <div className="card">
+        <UploadButton onFileUpload={handleFileUpdate} folderMap={folderMap} />
+        <br />
+        {folderMap.size > 0 && (
+          <div className="fileDisplay"><p>Upload Successful</p></div>
+        )}
+      </div>
 
-            <p className="read-the-docs">
-                {/* eslint-disable-next-line react/no-unescaped-entities */}
-                "El que vale vale y el que no, a ICADE" <br />
-                - El Discriminador.
-            </p>
-            <p className="read-the-docs">
-                To learn more click on the CICLAB logo or visit {'https://github.com/CICLAB-Comillas'}
-            </p>
+      {folderMap.size > 0 && (
+        <div className="card">
+          <Tinder map={folderMap} />
         </div>
-    );
+      )}
+      <p className="read-the-docs">
+        To learn more click on the CICLAB logo or visit{' '}
+        <a href="https://github.com/CICLAB-Comillas" target="_blank" rel="noreferrer">
+          https://github.com/CICLAB-Comillas
+        </a>
+      </p>
+    </div>
+  );
 }
 
 export default App;

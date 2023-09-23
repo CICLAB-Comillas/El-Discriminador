@@ -1,0 +1,102 @@
+.png-container.expanded {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 80%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    cursor: zoom-out;
+    /* Cambia el cursor a una lupa para indicar la posibilidad de hacer zoom */
+    overflow: hidden;
+    /* Evita que la imagen se desborde del contenedor */
+    overflow-y: auto;
+}
+
+.png-container.expanded:hover {
+    cursor: zoom-in;
+    /* Cambia el cursor a una lupa con un signo de "+" al pasar sobre la imagen */
+}
+
+.png-container.expanded img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    /* Agrega una transición suave al aplicar la transformación de escala */
+}
+
+.png-container.expanded:hover img {
+    transform: scale(2.4);
+    /* Aplica una escala del 240% a la imagen al pasar sobre ella */
+}
+
+.collapse-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+.grade-box {
+    width: 40px;
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.subject-list {
+    list-style: none;
+    padding: 0;
+}
+
+.subject-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.subject-grade-container {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+.subject {
+    font-weight: bold;
+}
+
+.subject-input {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.grade {
+    font-weight: bold;
+}
+
+.grade-input {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.Student-name-and-arrow-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Vertically center align the content */
+    margin:0;
+}
