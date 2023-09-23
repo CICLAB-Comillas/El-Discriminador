@@ -5,15 +5,20 @@ import SaveButton from "./SaveButton.jsx";
 import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
 const Tinder = ({map}) => {
-  const [pngURLs, setPngURLs] = useState([]);
-  const [jsonData, setJsonData] = useState([]);
-  const [currentPairIndex, setCurrentPairIndex] = useState(0);
-  const [userInputs, setUserInputs] = useState([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
-  const [pngFiles, setPngFiles] = useState([]); // Declare pngFiles
-  const [jsonFiles, setJsonFiles] = useState([]); // Declare jsonFiles
+    const [pngURLs, setPngURLs] = useState([]);
+    const [jsonData, setJsonData] = useState([]);
+    const [currentPairIndex, setCurrentPairIndex] = useState(0);
+    const [userInputs, setUserInputs] = useState([]);
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [zoom, setZoom] = useState(1);
+    const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
+    const [pngFiles, setPngFiles] = useState([]); // Declare pngFiles
+    const [jsonFiles, setJsonFiles] = useState([]); // Declare jsonFile
+    const [allpngFiles, setallPngFiles] = useState([]); // Declare pngFiles
+    const [alljsonFiles, setallJsonFiles] = useState([]); // Declare jsonFile
+    const [allpngURLs, setallPngURLs] = useState([]);
+    const [alljsonData, setallJsonData] = useState([]);
+
 
   const outerFolder = Array.from(map.keys())[0];
   const keys = Array.from(map.get(outerFolder).keys());
@@ -25,6 +30,29 @@ const Tinder = ({map}) => {
         const subfolderMap = map.get(outerFolder).get(currentKey);
         const pngFiles = [];
         const jsonFiles = [];
+        const allpngFiles = [];
+        const alljsonFiles =[];
+
+
+        for (const key of keys) {
+            const studentfolder = map.get(outerFolder).get(key);
+
+            const auxpng=[];
+            const auxjson=[];
+
+            if (studentfolder instanceof Array) {
+                studentfolder.forEach(file => {
+                    if (file.type === 'image/png') {
+                        auxpng.push(file);
+                    } else if (file.type === 'application/json') {
+                        auxjson.push(file);
+                    }
+                });
+                allpngFiles.push(auxpng)
+                alljsonFiles.push(auxjson)
+            }
+        }
+
 
         if (subfolderMap instanceof Array) {
           subfolderMap.forEach(file => {
@@ -49,6 +77,21 @@ const Tinder = ({map}) => {
           })
         );
 
+        const alljsonContent = await Promise.all(
+          alljsonFiles.map(async (jsonFilesArray) => {
+            const jsonContent = await Promise.all(
+              jsonFilesArray.map(async (file) => {
+                const content = await readFileAsText(file);
+                return JSON.parse(content);
+              })
+            );
+            return jsonContent;
+          })
+        );
+
+        setallJsonData(alljsonContent);
+        setallPngFiles(allpngFiles);
+        setallJsonFiles(alljsonFiles);
         setPngURLs(pngURLs);
         setJsonData(jsonContent);
         setPngFiles(pngFiles);
@@ -56,6 +99,7 @@ const Tinder = ({map}) => {
         setIsDataLoaded(true);
         setUserInputs(jsonContent.map(() => ({})));
         setZoom(1);
+
       } catch (error) {
         console.error('Error loading data:', error);
       }
@@ -187,7 +231,7 @@ const Tinder = ({map}) => {
       </div>
       {pngFiles.length > 0 && jsonFiles.length > 0 && (
         <div className="card">
-          <SaveButton pngFiles={pngFiles} jsonFiles={jsonData} userInputs={userInputs} />
+          <SaveButton pngFiles={allpngFiles} jsonFiles={alljsonData} userInputs={userInputs} />
         </div>
       )}
     </>

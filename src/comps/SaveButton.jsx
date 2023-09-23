@@ -4,36 +4,40 @@ import JSZip from 'jszip';
 const SaveButton = ({ pngFiles, jsonFiles, userInputs }) => {
 
 
-  console.log("Input JSON FILES", jsonFiles);
+  console.log("USER INPUTS", userInputs)
 
   const handleSave = () => {
     const zip = new JSZip();
 
     // Iterate over all pairs
     for (let i = 0; i < pngFiles.length; i++) {
-      const pairFolder = zip.folder(`pair${i + 1}`);
+      const studentFolder = zip.folder(`student${i + 1}`);
 
-      // Add the PNG file to the pair folder
-      pairFolder.file('image.png', pngFiles[i]);
+      for (let j = 0; j < pngFiles[i].length; j++) {
+        const pairFolder = studentFolder.folder(`pair${j + 1}`)
 
+        // Add the PNG file to the pair folder
+        const imageFileName = `image${j + 1}.png`;
+        pairFolder.file(imageFileName, pngFiles[i][j]);
 
-      // Add the JSON file to the pair folder
-      const jsonFileName = `data${i + 1}.json`;
-      const jsonDataString = JSON.stringify(jsonFiles[i], null, 2);
-      pairFolder.file(jsonFileName, jsonDataString);
+        //Add the JSON file to the pair folder
+        const jsonFileName = `data${j + 1}.json`;
+        const jsonDataString = JSON.stringify(jsonFiles[i][j], null, 2);
+        pairFolder.file(jsonFileName, jsonDataString);
 
-
-      // Add the JSON with user input to the pair folder
-      const userInputFileName = `user_input${i + 1}.json`;
-      const userInputDataString = JSON.stringify(userInputs[i], null, 2);
-      pairFolder.file(userInputFileName, userInputDataString);
+        //
+        // // Add the JSON with user input to the pair folder
+        // const userInputFileName = `user_input${j + 1}.json`;
+        // const userInputDataString = JSON.stringify(userInputs[i][j], null, 2);
+        // pairFolder.file(userInputFileName, userInputDataString);
+      }
     }
 
     // Generate the ZIP file asynchronously
     zip.generateAsync({ type: 'blob' }).then((content) => {
       // Create a download link and trigger the download
       const downloadLink = document.createElement('a');
-      const zipFileName = 'pairs.zip';
+      const zipFileName = 'StudentData.zip';
       downloadLink.href = URL.createObjectURL(content);
       downloadLink.download = zipFileName;
       downloadLink.click();
