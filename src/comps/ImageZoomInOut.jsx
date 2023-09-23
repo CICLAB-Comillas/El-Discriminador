@@ -14,6 +14,11 @@ function ImageZoomInOut({ imageUrl }) {
     setScale((prevScale) => prevScale - 0.1);
   };
 
+  const resetZoom = () => {
+    setScale(1);
+    setPosition({x:0, y:0})
+  };
+
   useEffect(() => {
     const image = imageRef.current;
     let isDragging = false;
@@ -65,8 +70,11 @@ function ImageZoomInOut({ imageUrl }) {
           <button onClick={handleZoomIn} style={{ marginBottom: "5px" }}>
             <span className="material-symbols-outlined">+</span>
           </button>
-          <button onClick={handleZoomOut}>
+          <button onClick={handleZoomOut} style={{ marginBottom: "5px" }}>
             <span className="material-symbols-outlined">-</span>
+          </button>
+            <button onClick={resetZoom}>
+            <span className="material-symbols-outlined">reset</span>
           </button>
         </div>
       </div>
