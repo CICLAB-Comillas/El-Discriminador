@@ -5,15 +5,11 @@ import SaveButton from "./SaveButton.jsx";
 import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
 const Tinder = ({map}) => {
-    const [pngURLs, setPngURLs] = useState([]);
-    const [jsonData, setJsonData] = useState([]);
     const [currentPairIndex, setCurrentPairIndex] = useState(0);
     const [userInputs, setUserInputs] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [zoom, setZoom] = useState(1);
     const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
-    const [pngFiles, setPngFiles] = useState([]); // Declare pngFiles
-    const [jsonFiles, setJsonFiles] = useState([]); // Declare jsonFile
     const [allpngFiles, setallPngFiles] = useState([]); // Declare pngFiles
     const [alljsonFiles, setallJsonFiles] = useState([]); // Declare jsonFile
     const [allpngURLs, setallPngURLs] = useState([]);
@@ -64,18 +60,18 @@ const Tinder = ({map}) => {
           });
         }
 
-        const pngURLs = await Promise.all(
-          pngFiles.map(async (file) => {
-            return await readFileAsDataURL(file);
+
+        const allpngURLs = await Promise.all(
+          allpngFiles.map(async (pngFilesArray) => {
+            const pngURLs = await Promise.all(
+              pngFilesArray.map(async (file) => {
+                return await readFileAsDataURL(file);
+              })
+            );
+            return pngURLs;
           })
         );
 
-        const jsonContent = await Promise.all(
-          jsonFiles.map(async (file) => {
-            const content = await readFileAsText(file);
-            return JSON.parse(content);
-          })
-        );
 
         const alljsonContent = await Promise.all(
           alljsonFiles.map(async (jsonFilesArray) => {
@@ -89,15 +85,12 @@ const Tinder = ({map}) => {
           })
         );
 
+        setallPngURLs(allpngURLs);
         setallJsonData(alljsonContent);
         setallPngFiles(allpngFiles);
         setallJsonFiles(alljsonFiles);
-        setPngURLs(pngURLs);
-        setJsonData(jsonContent);
-        setPngFiles(pngFiles);
-        setJsonFiles(jsonFiles);
         setIsDataLoaded(true);
-        setUserInputs(jsonContent.map(() => ({})));
+        setUserInputs(alljsonContent.map((content) => content.map(() => ({}))));
         setZoom(1);
 
       } catch (error) {
@@ -110,7 +103,7 @@ const Tinder = ({map}) => {
     };
 
     fetchData();
-  }, [map, outerFolder, currentKeyIndex]);
+  }, [map, outerFolder]);
 
 
   const handleNextKey = () => {
@@ -128,13 +121,13 @@ const Tinder = ({map}) => {
     };
 
   const handleNext = () => {
-    setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
+    setCurrentPairIndex((prevIndex) => (prevIndex + 1) % allpngURLs[currentKeyIndex].length);
     setZoom(1); // Reset zoom when moving to the next pair
   };
 
   const handlePrev = () => {
     setCurrentPairIndex((prevIndex) =>
-      prevIndex === 0 ? pngURLs.length - 1 : prevIndex - 1
+      prevIndex === 0 ? allpngURLs[currentKeyIndex].length - 1 : prevIndex - 1
     );
     setZoom(1); // Reset zoom when moving to the previous pair
   };
@@ -142,8 +135,8 @@ const Tinder = ({map}) => {
   const handleSubjectChange = (event, title) => {
     setUserInputs((prevInputs) => {
       const updatedInputs = [...prevInputs];
-      updatedInputs[currentPairIndex] = {
-        ...updatedInputs[currentPairIndex],
+      updatedInputs[currentKeyIndex][currentPairIndex] = {
+        ...updatedInputs[currentKeyIndex][currentPairIndex],
         [title]: event.target.value,
       };
 
@@ -162,7 +155,7 @@ const Tinder = ({map}) => {
           <div className="pair-container">
             <div className="image-container">
               <div className="png-container">
-                <ImageZoomInOut imageUrl={pngURLs[currentPairIndex]} zoom={zoom} />
+                <ImageZoomInOut imageUrl={allpngURLs[currentKeyIndex][currentPairIndex]} zoom={zoom} />
               </div>
               <div className="button-container">
                 <div className="arrow-row">
@@ -170,7 +163,7 @@ const Tinder = ({map}) => {
                   <button onClick={handleNext}>&gt;</button>
                 </div>
                 <div className="pair-indicator">
-                  {currentPairIndex + 1}/{pngURLs.length}
+                  {currentPairIndex + 1}/{allpngURLs[currentKeyIndex].length}
                 </div>
               </div>
             </div>
@@ -180,10 +173,10 @@ const Tinder = ({map}) => {
                   <h1>{getCurrentKey()}</h1>
                   <button onClick={handleNextKey}>Next &gt;</button>
                 </div>
-              {jsonData[currentPairIndex] && (
+              {alljsonData[currentKeyIndex][currentPairIndex] && (
                 <div>
                   <ul className="subject-list">
-                    {Object.entries(jsonData[currentPairIndex]).map(([subject_name, subject_properties]) => {
+                    {Object.entries(alljsonData[currentKeyIndex][currentPairIndex]).map(([subject_name, subject_properties]) => {
                       const formattedTitle = subject_name.replace(/_/g, ' '); // Replace underscores with spaces
                       let grades = [];
 
@@ -204,7 +197,7 @@ const Tinder = ({map}) => {
                                 type="text"
                                 className="subject-input"
                                 placeholder="Enter subject text"
-                                value={userInputs[currentPairIndex][subject_name] || ''}
+                                value={userInputs[currentKeyIndex][currentPairIndex][subject_name] || ''}
                                 onChange={(event) => handleSubjectChange(event, subject_name)}
                               />
                             </div>
@@ -229,7 +222,7 @@ const Tinder = ({map}) => {
           </div>
         </div>
       </div>
-      {pngFiles.length > 0 && jsonFiles.length > 0 && (
+      {allpngFiles.length > 0 && alljsonFiles.length > 0 && (
         <div className="card">
           <SaveButton pngFiles={allpngFiles} jsonFiles={alljsonData} userInputs={userInputs} />
         </div>
@@ -237,8 +230,6 @@ const Tinder = ({map}) => {
     </>
   );
 };
-// It used to be like this: <SaveButton pngFiles={pngFiles} jsonFiles={jsonFiles} userInputs={userInputs} />
-// But jsonFiles was passing information about the file, rather than the content
 
 
 Tinder.propTypes = {
