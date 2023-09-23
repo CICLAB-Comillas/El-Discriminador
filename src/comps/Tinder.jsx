@@ -10,69 +10,37 @@ const Tinder = ({map}) => {
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [userInputs, setUserInputs] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [zoom, setZoom] = useState(1); // State to manage zoom level
+  const [zoom, setZoom] = useState(1);
   const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
-  const outerFolder = Array.from(map.keys())[0]; // Assuming there's always at least one key, "gui_data" in your case
-  const keys = Array.from(map.get(outerFolder).keys()); // Fetch the subfolder keys (001, 002, 003)
+  const [pngFiles, setPngFiles] = useState([]); // Declare pngFiles
+  const [jsonFiles, setJsonFiles] = useState([]); // Declare jsonFiles
 
-
-  const handleNextKey = () => {
-        setCurrentPairIndex(0);
-        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % keys.length);
-        getFilesForCurrentKey();
-    };
-
-    const handlePrevKey = () => {
-        setCurrentPairIndex(0);
-        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + keys.length) % keys.length);
-        getFilesForCurrentKey();
-    };
-
-    const getCurrentKey = () => {
-        return keys[currentKeyIndex];
-    };
-
-    const getFilesForCurrentKey = () => {
-        const currentKey = getCurrentKey();
-        const pngFiles = [];
-        const jsonFiles = [];
-
-        const subfolderMap = map.get(outerFolder).get(currentKey);
-        if (subfolderMap instanceof Array) {
-
-            subfolderMap.forEach(file => {
-                // Using MIME types instead of file extensions
-                if (file.type === 'image/png') {
-                    pngFiles.push(file);
-                } else if (file.type === 'application/json') {
-                    jsonFiles.push(file);
-                }
-            });
-        }
-
-        console.log("get json files" ,jsonFiles.length);
-        console.log("get png files" ,pngFiles.length);
-
-        return [pngFiles, jsonFiles];
-    };
-
-    const [pngFiles, jsonFiles] = getFilesForCurrentKey();
-
-
-    console.log("TINDER PARENT FILES", jsonFiles);
-    console.log("TINDER PARENT FILES", pngFiles);
-
+  const outerFolder = Array.from(map.keys())[0];
+  const keys = Array.from(map.get(outerFolder).keys());
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const currentKey = getCurrentKey();
+        const subfolderMap = map.get(outerFolder).get(currentKey);
+        const pngFiles = [];
+        const jsonFiles = [];
+
+        if (subfolderMap instanceof Array) {
+          subfolderMap.forEach(file => {
+            if (file.type === 'image/png') {
+              pngFiles.push(file);
+            } else if (file.type === 'application/json') {
+              jsonFiles.push(file);
+            }
+          });
+        }
+
         const pngURLs = await Promise.all(
           pngFiles.map(async (file) => {
             return await readFileAsDataURL(file);
           })
         );
-
-        console.log("PNG URLS", pngFiles)
 
         const jsonContent = await Promise.all(
           jsonFiles.map(async (file) => {
@@ -84,16 +52,40 @@ const Tinder = ({map}) => {
         setPngURLs(pngURLs);
         setJsonData(jsonContent);
         setIsDataLoaded(true);
-        setUserInputs(jsonContent.map(() => ({}))); // Initialize empty user inputs for each pair
-        setZoom(1); // Reset zoom when data changes
+        setUserInputs(jsonContent.map(() => ({})));
+        setZoom(1);
       } catch (error) {
         console.error('Error loading data:', error);
       }
     };
 
-    fetchData();
-  }, [pngFiles, jsonFiles]);
+    const getCurrentKey = () => {
+      return keys[currentKeyIndex];
+    };
 
+    const keys = Array.from(map.get(outerFolder).keys());
+
+
+    fetchData();
+  }, [map, outerFolder, currentKeyIndex]);
+
+
+  console.log('pngFiles:', pngFiles);
+  console.log('jsonFiles:', jsonFiles);
+
+  const handleNextKey = () => {
+        setCurrentPairIndex(0);
+        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % keys.length);
+    };
+
+    const handlePrevKey = () => {
+        setCurrentPairIndex(0);
+        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + keys.length) % keys.length);
+    };
+
+    const getCurrentKey = () => {
+        return keys[currentKeyIndex];
+    };
 
   const handleNext = () => {
     setCurrentPairIndex((prevIndex) => (prevIndex + 1) % pngURLs.length);
