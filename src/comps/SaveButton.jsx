@@ -25,11 +25,11 @@ const SaveButton = ({ pngFiles, jsonFiles, userInputs }) => {
         const jsonDataString = JSON.stringify(jsonFiles[i][j], null, 2);
         pairFolder.file(jsonFileName, jsonDataString);
 
-        //
-        // // Add the JSON with user input to the pair folder
-        // const userInputFileName = `user_input${j + 1}.json`;
-        // const userInputDataString = JSON.stringify(userInputs[i][j], null, 2);
-        // pairFolder.file(userInputFileName, userInputDataString);
+
+        // Add the JSON with user input to the pair folder
+        const userInputFileName = `user_input${j + 1}.json`;
+        const userInputDataString = JSON.stringify(userInputs[i][j], null, 2);
+        pairFolder.file(userInputFileName, userInputDataString);
       }
     }
 

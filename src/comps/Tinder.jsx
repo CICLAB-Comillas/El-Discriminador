@@ -133,16 +133,23 @@ const Tinder = ({map}) => {
   };
 
   const handleSubjectChange = (event, title) => {
-    setUserInputs((prevInputs) => {
-      const updatedInputs = [...prevInputs];
-      updatedInputs[currentKeyIndex][currentPairIndex] = {
-        ...updatedInputs[currentKeyIndex][currentPairIndex],
-        [title]: event.target.value,
-      };
+      setUserInputs((prevInputs) => {
+        const updatedInputs = [...prevInputs];
+        const inputValue = event.target.value;
 
-      return updatedInputs;
-    });
-  };
+        // Check if the input value is empty, if so, remove the entry
+        if (inputValue === '') {
+            delete updatedInputs[currentKeyIndex][currentPairIndex][title];
+        } else {
+          updatedInputs[currentKeyIndex][currentPairIndex] = {
+            ...updatedInputs[currentKeyIndex][currentPairIndex],
+            [title]: inputValue,
+          };
+        }
+
+        return updatedInputs;
+      });
+    };
 
   if (!isDataLoaded) {
     return <div>Loading...</div>;
@@ -209,6 +216,7 @@ const Tinder = ({map}) => {
                                 type="text"
                                 className="grade-input"
                                 placeholder=""
+
                               />
                             </div>
                           </li>
