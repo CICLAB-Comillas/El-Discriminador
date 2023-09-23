@@ -51,6 +51,8 @@ const Tinder = ({map}) => {
 
         setPngURLs(pngURLs);
         setJsonData(jsonContent);
+        setPngFiles(pngFiles);
+        setJsonFiles(jsonFiles);
         setIsDataLoaded(true);
         setUserInputs(jsonContent.map(() => ({})));
         setZoom(1);
@@ -154,7 +156,6 @@ const Tinder = ({map}) => {
                       }
 
                       return grades.map((grade, index) => {
-                      console.log(`Key for subject at index ${index}: ${subject_name}_${index}`);
                         return (
                           <li key={`${subject_name}_${index}`}>
                             <div className="subject-grade-container">
