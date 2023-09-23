@@ -132,24 +132,41 @@ const Tinder = ({map}) => {
     setZoom(1); // Reset zoom when moving to the previous pair
   };
 
-  const handleSubjectChange = (event, title) => {
+  const handleSubjectChange = (event, subject_name) => {
       setUserInputs((prevInputs) => {
         const updatedInputs = [...prevInputs];
         const inputValue = event.target.value;
 
-        // Check if the input value is empty, if so, remove the entry
+        // Check if the input value is empty, if so, delete the entry
         if (inputValue === '') {
-            delete updatedInputs[currentKeyIndex][currentPairIndex][title];
+          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`];
         } else {
-          updatedInputs[currentKeyIndex][currentPairIndex] = {
-            ...updatedInputs[currentKeyIndex][currentPairIndex],
-            [title]: inputValue,
-          };
+          // Change the key to `${subject_name}-new-title`
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`] = inputValue;
+        }
+
+        return updatedInputs;
+      });
+  };
+
+
+  const handleGradeChange = (event, subject_name) => {
+      setUserInputs((prevInputs) => {
+        const updatedInputs = [...prevInputs];
+        const inputValue = event.target.value;
+
+        // Check if the input value is empty, if so, delete the entry
+        if (inputValue === '') {
+          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`];
+        } else {
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`] = inputValue;
         }
 
         return updatedInputs;
       });
     };
+
+
 
   if (!isDataLoaded) {
     return <div>Loading...</div>;
@@ -201,11 +218,11 @@ const Tinder = ({map}) => {
                                 <div className="subject">{formattedTitle}</div>
                               </div>
                               <input
-                                type="text"
-                                className="subject-input"
-                                placeholder="Enter subject text"
-                                value={userInputs[currentKeyIndex][currentPairIndex][subject_name] || ''}
-                                onChange={(event) => handleSubjectChange(event, subject_name)}
+                                  type="text"
+                                  className="subject-input"
+                                  placeholder="Enter subject text"
+                                  value={userInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`] || ''}
+                                  onChange={(event) => handleSubjectChange(event, subject_name)}
                               />
                             </div>
                             <div className="subject-grade-container">
@@ -216,7 +233,8 @@ const Tinder = ({map}) => {
                                 type="text"
                                 className="grade-input"
                                 placeholder=""
-
+                                value={userInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`] || ''}
+                                onChange={(event) => handleGradeChange(event, subject_name)}
                               />
                             </div>
                           </li>
