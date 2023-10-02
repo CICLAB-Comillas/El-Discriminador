@@ -13,6 +13,8 @@ const Tinder = ({map}) => {
     const [alljsonFiles, setallJsonFiles] = useState([]); // Declare jsonFile
     const [allpngURLs, setallPngURLs] = useState([]);
     const [alljsonData, setallJsonData] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useState({});
+    const [selectedSubjectsCount, setSelectedSubjectsCount] = useState(0); // State to track the count of selected subjects
 
 
   const outerFolder = Array.from(map.keys())[0];
@@ -105,6 +107,18 @@ const Tinder = ({map}) => {
   }, [map, outerFolder]);
 
 
+  // Function to clear selected subjects when changing keys or pair index
+  useEffect(() => {
+    setSelectedSubjects({});
+  }, [currentKeyIndex, currentPairIndex]);
+
+  useEffect(() => {
+    // Calculate the count of selected subjects whenever selectedSubjects changes
+    const count = Object.values(selectedSubjects).filter((selected) => selected).length;
+    setSelectedSubjectsCount(count);
+  }, [selectedSubjects]);
+
+
   const handleNextKey = () => {
         setCurrentPairIndex(0);
         setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % keys.length);
@@ -179,6 +193,41 @@ const Tinder = ({map}) => {
 
 
 
+  // Function to handle subject selection and color change
+  const handleSubjectSelection = (event, subject_key) => {
+    // Check if the clicked element is an input field or if text is being selected/highlighted
+    if (
+      event.target.tagName.toLowerCase() === 'input' ||
+      window.getSelection().toString().length > 0
+    ) {
+      return; // Do nothing if it's an input or text is selected/highlighted
+    }
+
+    setSelectedSubjects((prevSelected) => {
+      // Clone the previous selected subjects object
+      const updatedSelected = { ...prevSelected };
+
+      // Toggle the selection status of the subject
+      updatedSelected[subject_key] = !updatedSelected[subject_key];
+
+      return updatedSelected;
+    });
+  };
+
+
+  // Function to get the background color for an <li> based on selection status
+  const getLiStyles = (subject_key) => {
+      const isSelected = selectedSubjects[subject_key];
+
+      const backgroundColor = isSelected ? '#93a9d1' : '#dedede';
+      const borderColor = isSelected ? '#93a9d1' : '#dedede';
+
+      return { backgroundColor, borderColor };
+};
+
+
+
+
   if (!isDataLoaded) {
     return <div>Loading...</div>;
   }
@@ -217,7 +266,11 @@ const Tinder = ({map}) => {
                       let subject_year = subject_properties.year;
 
                       return (
-                        <li key={`${subject_key}`}>
+                        <li
+                            key={`${subject_key}`}
+                            style={getLiStyles(subject_key)} // Apply background and border colors dynamically
+                            onClick={(event) => handleSubjectSelection(event, subject_key)} // Handle click to select/deselect
+                        >
                           <div className="subject-grade-container">
                             <div className="subject-box">
                               <div className="subject">{subject_name}</div>
@@ -258,6 +311,9 @@ const Tinder = ({map}) => {
                       );
                     })}
                   </ul>
+                    <div className="selected-subjects-button">
+                      {selectedSubjectsCount}/{Object.keys(alljsonData[currentKeyIndex][currentPairIndex]).length} subjects selected
+                    </div>
                 </div>
               )}
             </div>
