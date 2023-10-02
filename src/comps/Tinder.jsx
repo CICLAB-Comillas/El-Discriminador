@@ -92,7 +92,6 @@ const Tinder = ({map}) => {
         setallJsonFiles(alljsonFiles);
         setIsDataLoaded(true);
         setUserInputs(alljsonContent.map((content) => content.map(() => ({}))));
-        setZoom(1);
 
       } catch (error) {
         console.error('Error loading data:', error);
@@ -110,6 +109,8 @@ const Tinder = ({map}) => {
   // Function to clear selected subjects when changing keys or pair index
   useEffect(() => {
     setSelectedSubjects({});
+    setZoom(1);
+
   }, [currentKeyIndex, currentPairIndex]);
 
   useEffect(() => {
