@@ -226,6 +226,45 @@ const Tinder = ({map}) => {
 };
 
 
+const handleApplyChanges = () => {
+  // Get the text from the input box
+  const newText = document.querySelector(".subject-input-box").value;
+
+  // Check if there are any selected subjects
+  const isAnySubjectSelected = Object.values(selectedSubjects).some((selected) => selected);
+
+  if (isAnySubjectSelected) {
+    // Loop through the selected subjects
+    Object.keys(selectedSubjects).forEach((subject_key) => {
+      if (selectedSubjects[subject_key]) {
+        // Update the year text for each selected subject
+        setUserInputs((prevInputs) => {
+          const updatedInputs = [...prevInputs];
+
+          // Update the year text for the current subject
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-year`] = newText;
+
+          return updatedInputs;
+        });
+      }
+    });
+
+    // Clear selections
+    setSelectedSubjects({});
+
+    // Clear the text from the input box
+    document.querySelector(".subject-input-box").value = '';
+  }
+};
+
+
+const handleDiscardChanges = () => {
+  // Unselect all subjects
+  setSelectedSubjects({});
+
+  // Clear the text from the input box
+  document.querySelector(".subject-input-box").value = '';
+};
 
 
   if (!isDataLoaded) {
@@ -311,9 +350,23 @@ const Tinder = ({map}) => {
                       );
                     })}
                   </ul>
-                    <div className="selected-subjects-button">
-                      {selectedSubjectsCount}/{Object.keys(alljsonData[currentKeyIndex][currentPairIndex]).length} subjects selected
-                    </div>
+                    <div className="selected-subjects-container">
+                      <div className="selected-subjects-text">
+                        {selectedSubjectsCount}/{Object.keys(alljsonData[currentKeyIndex][currentPairIndex]).length} subjects selected
+                      </div>
+                      <input
+                        type="text"
+                        className="subject-input-box"
+                        placeholder="Introduce new year"
+                        // Add your input handling logic here
+                      />
+                    <button className="apply-button" onClick={handleApplyChanges}>
+                      Apply
+                    </button>
+                    <button className="discard-button" onClick={handleDiscardChanges}>
+                      Discard
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

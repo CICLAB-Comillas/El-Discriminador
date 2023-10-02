@@ -371,3 +371,55 @@
     align-items: center; /* Vertically center align the content */
     margin:0;
 }
+
+
+.selected-subjects-container {
+  display: flex;
+  height: 40px;
+  justify-content: center; /* Horizontally center child elements */
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.selected-subjects-text {
+  font-size: 15px;
+  font-weight: bold;
+  color: black;
+}
+
+.subject-input-box {
+  width: 200px;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-left: 10px;
+  font-size: 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+
+.apply-button {
+  height: 34px;
+  width: 80px;
+  justify-content: center; /* Horizontally center child elements */
+  display: flex;
+  align-items: center;
+  margin-left: 10px; /* Add some spacing between the buttons */
+  background-color: #93a9d1;
+  font-weight: bold;
+  color: black;
+  font-size: 15px;
+}
+
+.discard-button {
+  height: 34px;
+  width: 80px;
+  justify-content: center; /* Horizontally center child elements */
+  display: flex;
+  align-items: center;
+  margin-left: 10px; /* Add some spacing between the buttons */
+  background-color: #bdbdbd;
+  font-weight: bold;
+  color: black;
+  font-size: 15px;
+}
