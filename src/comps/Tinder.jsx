@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import './Tinder.css';
 import SaveButton from "./SaveButton.jsx";
 import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
@@ -132,17 +131,30 @@ const Tinder = ({map}) => {
     setZoom(1); // Reset zoom when moving to the previous pair
   };
 
-  const handleSubjectChange = (event, subject_name) => {
+  const handleSubjectChange = (event, subject_key) => {
       setUserInputs((prevInputs) => {
         const updatedInputs = [...prevInputs];
         const inputValue = event.target.value;
 
-        // Check if the input value is empty, if so, delete the entry
         if (inputValue === '') {
-          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`];
+          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-name`];
         } else {
-          // Change the key to `${subject_name}-new-title`
-          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`] = inputValue;
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-name`] = inputValue;
+        }
+
+        return updatedInputs;
+      });
+  };
+
+  const handleYearChange = (event, subject_key) => {
+      setUserInputs((prevInputs) => {
+        const updatedInputs = [...prevInputs];
+        const inputValue = event.target.value;
+
+        if (inputValue === '') {
+          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-year`];
+        } else {
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-year`] = inputValue;
         }
 
         return updatedInputs;
@@ -150,16 +162,15 @@ const Tinder = ({map}) => {
   };
 
 
-  const handleGradeChange = (event, subject_name) => {
+  const handleGradeChange = (event, subject_key) => {
       setUserInputs((prevInputs) => {
         const updatedInputs = [...prevInputs];
         const inputValue = event.target.value;
 
-        // Check if the input value is empty, if so, delete the entry
         if (inputValue === '') {
-          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`];
+          delete updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-grade`];
         } else {
-          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`] = inputValue;
+          updatedInputs[currentKeyIndex][currentPairIndex][`${subject_key}-grade`] = inputValue;
         }
 
         return updatedInputs;
@@ -200,46 +211,51 @@ const Tinder = ({map}) => {
               {alljsonData[currentKeyIndex][currentPairIndex] && (
                 <div>
                   <ul className="subject-list">
-                    {Object.entries(alljsonData[currentKeyIndex][currentPairIndex]).map(([subject_name, subject_properties]) => {
-                      const formattedTitle = subject_name.replace(/_/g, ' '); // Replace underscores with spaces
-                      let grades = [];
+                    {Object.entries(alljsonData[currentKeyIndex][currentPairIndex]).map(([subject_key, subject_properties]) => {
+                      let subject_grade = parseFloat(subject_properties.grade);
+                      let subject_name = subject_properties.name;
+                      let subject_year = subject_properties.year;
 
-                      if (Array.isArray(subject_properties.grade)) {
-                        grades = subject_properties.grade;
-                      } else {
-                        grades = [subject_properties.grade];
-                      }
-
-                      return grades.map((grade, index) => {
-                        return (
-                          <li key={`${subject_name}_${index}`}>
-                            <div className="subject-grade-container">
-                              <div className="subject-box">
-                                <div className="subject">{formattedTitle}</div>
-                              </div>
-                              <input
-                                  type="text"
-                                  className="subject-input"
-                                  placeholder="Enter subject text"
-                                  value={userInputs[currentKeyIndex][currentPairIndex][`${subject_name}-new-title`] || ''}
-                                  onChange={(event) => handleSubjectChange(event, subject_name)}
-                              />
+                      return (
+                        <li key={`${subject_key}`}>
+                          <div className="subject-grade-container">
+                            <div className="subject-box">
+                              <div className="subject">{subject_name}</div>
                             </div>
-                            <div className="subject-grade-container">
-                              <div className="grade-box">
-                                <div className="grade">{grade}</div>
-                              </div>
-                              <input
-                                type="text"
-                                className="grade-input"
-                                placeholder=""
-                                value={userInputs[currentKeyIndex][currentPairIndex][`${subject_name}-grade`] || ''}
-                                onChange={(event) => handleGradeChange(event, subject_name)}
-                              />
+                            <input
+                              type="text"
+                              className="subject-input"
+                              placeholder="Enter subject text"
+                              value={userInputs[currentKeyIndex][currentPairIndex][`${subject_key}-name`] || ''}
+                              onChange={(event) => handleSubjectChange(event, subject_key)}
+                            />
+                          </div>
+                          <div className="subject-grade-container">
+                            <div className="year-box">
+                              <div className="year">{subject_year}</div>
                             </div>
-                          </li>
-                        );
-                      });
+                            <input
+                              type="text"
+                              className="year-input"
+                              placeholder="Enter subject year"
+                              value={userInputs[currentKeyIndex][currentPairIndex][`${subject_key}-year`] || ''}
+                              onChange={(event) => handleYearChange(event, subject_key)}
+                            />
+                          </div>
+                          <div className="subject-grade-container">
+                            <div className="grade-box">
+                              <div className="grade">{subject_grade}</div>
+                            </div>
+                            <input
+                              type="text"
+                              className="grade-input"
+                              placeholder=""
+                              value={userInputs[currentKeyIndex][currentPairIndex][`${subject_key}-grade`] || ''}
+                              onChange={(event) => handleGradeChange(event, subject_key)}
+                            />
+                          </div>
+                        </li>
+                      );
                     })}
                   </ul>
                 </div>
