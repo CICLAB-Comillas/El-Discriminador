@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
+import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
 import PropTypes from 'prop-types';
 import SaveButton from "./SaveButton.jsx";
-import ImageZoomInOut from './ImageZoomInOut'; // Import the Zoomable Image component
 
 const Tinder = ({map}) => {
     const [currentPairIndex, setCurrentPairIndex] = useState(0);
     const [userInputs, setUserInputs] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    const [zoom, setZoom] = useState(1);
     const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
     const [allpngFiles, setallPngFiles] = useState([]); // Declare pngFiles
     const [alljsonFiles, setallJsonFiles] = useState([]); // Declare jsonFile
@@ -109,7 +108,6 @@ const Tinder = ({map}) => {
   // Function to clear selected subjects when changing keys or pair index
   useEffect(() => {
     setSelectedSubjects({});
-    setZoom(1);
 
   }, [currentKeyIndex, currentPairIndex]);
 
@@ -136,14 +134,12 @@ const Tinder = ({map}) => {
 
   const handleNext = () => {
     setCurrentPairIndex((prevIndex) => (prevIndex + 1) % allpngURLs[currentKeyIndex].length);
-    setZoom(1); // Reset zoom when moving to the next pair
   };
 
   const handlePrev = () => {
     setCurrentPairIndex((prevIndex) =>
       prevIndex === 0 ? allpngURLs[currentKeyIndex].length - 1 : prevIndex - 1
     );
-    setZoom(1); // Reset zoom when moving to the previous pair
   };
 
   const handleSubjectChange = (event, subject_key) => {
@@ -262,10 +258,10 @@ const handleApplyChanges = () => {
 const handleDiscardChanges = () => {
   // Unselect all subjects
   setSelectedSubjects({});
-
   // Clear the text from the input box
   document.querySelector(".subject-input-box").value = '';
 };
+
 
 
   if (!isDataLoaded) {
@@ -279,7 +275,15 @@ const handleDiscardChanges = () => {
           <div className="pair-container">
             <div className="image-container">
               <div className="png-container">
-                <ImageZoomInOut imageUrl={allpngURLs[currentKeyIndex][currentPairIndex]} zoom={zoom} />
+                <TransformWrapper>
+                  <TransformComponent>
+                    <img
+                      src={allpngURLs[currentKeyIndex][currentPairIndex]}
+                      alt="Image"
+                      width="100%"
+                    />
+                  </TransformComponent>
+                </TransformWrapper>
               </div>
               <div className="button-container">
                 <div className="arrow-row">

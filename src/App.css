@@ -225,19 +225,6 @@
 }
 
 
-/* PNG Image */
-.png-container {
-  max-width: 100%;
-  cursor: pointer;
-}
-
-.png-container img {
-  width: 550px;
-  height: auto;
-  object-fit: contain;
-  border: 1px solid #93a9d1;
-}
-
 /* Tinder Pair Container */
 .pair-container {
   display: flex;
@@ -251,11 +238,6 @@
 
 }
 
-.png-container img {
-  max-width: 100%; /* Make the image width 100% of its container */
-  height: auto;
-  object-fit: contain;
-}
 
 .content-container {
   flex-basis: 50%;
@@ -309,40 +291,6 @@
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
-}
-
-.png-container.expanded {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 80%;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
-    cursor: zoom-out;
-    /* Cambia el cursor a una lupa para indicar la posibilidad de hacer zoom */
-    overflow: hidden;
-    /* Evita que la imagen se desborde del contenedor */
-    overflow-y: auto;
-}
-
-.png-container.expanded:hover {
-    cursor: zoom-in;
-    /* Cambia el cursor a una lupa con un signo de "+" al pasar sobre la imagen */
-}
-
-.png-container.expanded img {
-    width: 90%;
-    height: 90%;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-    /* Agrega una transición suave al aplicar la transformación de escala */
-}
-
-.png-container.expanded:hover img {
-    transform: scale(2.4);
-    /* Aplica una escala del 240% a la imagen al pasar sobre ella */
 }
 
 .collapse-button {
@@ -422,4 +370,19 @@
   font-weight: bold;
   color: black;
   font-size: 15px;
+}
+
+
+.zoom-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+
+.png-container {
+  max-width: 100%;
+  cursor: pointer;
+  border: 2px solid black;
 }
