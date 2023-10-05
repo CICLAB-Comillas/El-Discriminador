@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import PropTypes from 'prop-types';
 import SaveButton from "./SaveButton.jsx";
 
@@ -14,10 +14,8 @@ const Tinder = ({map}) => {
     const [alljsonData, setallJsonData] = useState([]);
     const [selectedSubjects, setSelectedSubjects] = useState({});
     const [selectedSubjectsCount, setSelectedSubjectsCount] = useState(0); // State to track the count of selected subjects
-
-
-  const outerFolder = Array.from(map.keys())[0];
-  const keys = Array.from(map.get(outerFolder).keys());
+    const outerFolder = Array.from(map.keys())[0];
+    const keys = Array.from(map.get(outerFolder).keys());
 
   useEffect(() => {
     const fetchData = async () => {
